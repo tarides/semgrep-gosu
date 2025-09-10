@@ -1,0 +1,45 @@
+File: semgrep-grammars/src/tree-sitter-gosu/LICENSE
+Git repo name: tree-sitter-gosu
+Latest commit in repo: c93aea03dc4190148cbacae8ea837f518c590427
+Last change in file:
+  commit c93aea03dc4190148cbacae8ea837f518c590427
+  Author: Puneeth Chaganti <punchagan@muse-amuse.in>
+  Date:   Wed Sep 10 23:21:47 2025
+  
+      Dummy LICENSE for release script in ocaml-tree-sitter-semgrep
+---
+File: semgrep-grammars/src/tree-sitter-gosu/grammar.js
+Git repo name: tree-sitter-gosu
+Latest commit in repo: c93aea03dc4190148cbacae8ea837f518c590427
+Last change in file:
+  commit 675349f9598f7beebccc6394595ff8c0c64d1f28
+  Author: Stephen Sherratt <stephen@sherra.tt>
+  Date:   Wed Sep 10 14:13:30 2025
+  
+      Add parser for subset of gosu
+      
+      Adds enough rules to parse the following simple program:
+      ```
+      var hello = "Hello, World!"
+      print(hello)
+      ```
+      
+      The tree-sitter grammer is based on the EBNF notation at
+      https://gosu-lang.github.io/grammar.html. The translation is fairly
+      mechanical however it's not simple 1:1 mapping because precedece
+      sometimes needs to be specified to avoid ambiguity in the grammar, and
+      tree-sitter does not permit rules which would match the empty string
+      however the grammar's original definition includes such rules.
+      
+      Signed-off-by: Stephen Sherratt <stephen@sherra.tt>
+---
+File: semgrep-grammars/src/semgrep-gosu/grammar.js
+Git repo name: ocaml-tree-sitter-semgrep
+Latest commit in repo: 3873dd3b469d9761db85f528f8be75d6c8b24c6b
+Last change in file:
+  commit d385af8822367b399f1341b2cc58f907165a25cb
+  Author: Puneeth Chaganti <punchagan@muse-amuse.in>
+  Date:   Wed Sep 10 16:56:21 2025
+  
+      ./add-simple-lang gosu
+---
