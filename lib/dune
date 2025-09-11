@@ -2,7 +2,7 @@
 (include_subdirs qualified)
 
 (library
-  (public_name tree-sitter-lang.gosu)
+  (public_name tree-sitter-lang-pro.gosu)
   (name tree_sitter_gosu)
   (libraries atdgen-runtime tree-sitter.run)
 

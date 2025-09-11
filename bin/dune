@@ -1,6 +1,6 @@
 (executable
-  (package tree-sitter-lang)
+  (package tree-sitter-lang-pro)
   (public_name parse-gosu)
   (name Main)
-  (libraries tree-sitter-lang.gosu)
+  (libraries tree-sitter-lang-pro.gosu)
 )
