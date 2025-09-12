@@ -15,15 +15,42 @@
 // for the start rule. These functions can be called in other rules but cannot
 // be a rule on their own.
 const PossiblyEmpty = {
-  start: $ => seq(PossiblyEmpty.header($), PossiblyEmpty.modifiers($), choice($.gClass)), // XXX incomplete
+  start: $ => seq(PossiblyEmpty.header($), PossiblyEmpty.modifiers($), choice($.gClass, $.gInterfaceOrStructure, $.gEnum, $.gEnhancement)),
   header: $ => seq(optional(seq("package", $.namespaceStatement)), optional($.usesStatementList)),
   modifiers: $ => repeat(choice($.annotation, "private", "internal", "protected", "public", "static", "abstract", "override", "final", "transient")),
   optionalType: $ => optional(choice(seq(":", $.typeLiteral), $.blockTypeLiteral)),
-  indirectMemberAccess: $ => repeat(choice($.arguments)), // XXX incomplete
+  indirectMemberAccess: $ => repeat(choice(
+    seq(choice(".", "?.", "*."), $.idAll, PossiblyEmpty.typeArguments($)),
+    $.featureLiteral,
+    seq(choice("[", "?["), $.expression, "]"),
+    $.arguments,
+  )),
   typeVariableDefs: $ => optional(seq("<", $.typeVariableDefinition, repeat(seq(",", $.typeVariableDefinition)), ">")),
   typeArguments: $ => optional(seq("<", $.typeArgument, repeat(seq(",", $.typeArgument)), ">")),
+  interfaceMembers: $ => repeat(seq(
+    PossiblyEmpty.modifiers($),
+    choice(
+      $.functionDefn,
+      $.propertyDefn,
+      $.fieldDefn,
+      $.gClass,
+      $.gInterfaceOrStructure,
+      $.gEnum,
+    ),
+    optional(";"),
+  )),
   classMembers: $ => repeat($.declaration),
+  enhancementMembers: $ => repeat(seq(
+    PossiblyEmpty.modifiers($),
+    choice(
+      seq($.functionDefn, $.functionBody),
+      seq($.propertyDefn, $.functionBody),
+    ),
+    optional(";"),
+  )),
   optionalArguments: $ => optional($.arguments),
+  initializer: $ => optional(choice($.initializerExpression, $.objectInitializer)),
+  anonymousInnerClass: $ => PossiblyEmpty.classMembers($),
 };
 
 // These patterns are used in the "Ident" rule. In order to make that rule
@@ -32,6 +59,7 @@ const PossiblyEmpty = {
 const Digit = /[0-9]/;
 const Letter = /[A-Za-z_$]/;
 
+// The rules, presented in the same order as the grammar definition in Gosu's source code.
 module.exports = grammar({
   name: "gosu",
 
@@ -53,25 +81,71 @@ module.exports = grammar({
       optional(seq("extends", $.classOrInterfaceType)),
       optional(seq("implements", $.classOrInterfaceType, repeat(seq(",", $.classOrInterfaceType)))),
       $.classBody,
-    ), // XXX incomplete
+    ),
+    gInterfaceOrStructure: $ => seq(
+      choice("interface", "structure"),
+      $.id,
+      PossiblyEmpty.typeVariableDefs($),
+      optional(seq("extends", $.classOrInterfaceType, repeat(seq(",", $.classOrInterfaceType)))),
+      $.interfaceBody,
+    ),
+    gEnum: $ => seq(
+      "enum",
+      $.id,
+      PossiblyEmpty.typeVariableDefs($),
+      optional(seq("implements", $.classOrInterfaceType, repeat(seq(",", $.classOrInterfaceType)))),
+      $.enumBody,
+    ),
+    gEnhancement: $ => seq(
+      "enhancement",
+      $.id,
+      PossiblyEmpty.typeVariableDefs($),
+      ":",
+      $.classOrInterfaceType,
+      repeat(seq("[", "]")),
+      $.enhancementBody,
+    ),
     classBody: $ => seq("{", PossiblyEmpty.classMembers($), "}"),
+    enhancementBody: $ => seq("{", PossiblyEmpty.enhancementMembers($), "}"),
+    interfaceBody: $ => seq("{", PossiblyEmpty.interfaceMembers($), "}"),
+    enumBody: $ => seq("{", optional($.enumConstants), PossiblyEmpty.classMembers($), "}"),
+    enumConstants: $ => seq($.enumConstant, repeat(seq(",", $.enumConstant)), optional(","), optional(";")),
+    enumConstant: $ => seq($.id, PossiblyEmpty.optionalArguments($)),
+    // "interfaceMembers" is possibly empty
     // "classMembers" is possibly empty
     declaration: $ => seq(PossiblyEmpty.modifiers($), choice(
       seq($.functionDefn, optional($.functionBody)),
       seq($.constructorDefn, $.functionBody),
+      seq($.propertyDefn, optional($.functionBody)),
       $.fieldDefn,
-    ), optional(";")), // XXX incomplete
+      $.delegateDefn,
+      $.gClass,
+      $.gInterfaceOrStructure,
+      $.gEnum,
+    ), optional(";")),
+    // "enhancementMembers" is possibly empty
+    delegateDefn: $ => seq("delegate", $.id, $.delegateStatement),
+    delegateStatement: $ => seq(
+      optional(seq(":", $.typeLiteral)),
+      "represents",
+      $.typeLiteral,
+      repeat(seq(",", $.typeLiteral)),
+      optional(seq("=", $.expression)),
+    ),
     // "optionalType" is possibly empty
     fieldDefn: $ => seq("var", $.id, PossiblyEmpty.optionalType($), optional(seq("as", optional("readonly"), $.id)), optional(seq("=", $.expression))),
+    propertyDefn: $ => seq("property", choice("get", "set"), $.id, $.parameters, optional(seq(":", $.typeLiteral))),
     dotPathWord: $ => prec.right(seq($.idAll, repeat(seq(".", $.idAll)))),
     namespaceStatement: $ => seq($.dotPathWord, repeat(";")),
     usesStatementList: $ => seq("uses", $.usesStatement, repeat(seq("uses", $.usesStatement))),
     usesStatement: $ => seq($.dotPathWord, optional(seq(".", "*")), repeat(";")),
+    // "typeVariableDefs" is possibly empty
     typeVariableDefinition: $ => seq($.id, optional(seq("extends", $.typeLiteralList))),
     functionBody: $ => $.statementBlock,
     parameters: $ => seq("(", optional($.parameterDeclarationList), ")"),
     functionDefn: $ => seq("function", $.id, PossiblyEmpty.typeVariableDefs($), $.parameters, optional(seq(":", $.typeLiteral))),
     constructorDefn: $ => seq("construct", $.parameters, optional(seq(":", $.typeLiteral))),
+    // "modifiers" is possibly empty
     statement: $ => {
       // Gosu's grammar explicitly that statements may end with semicolons, but
       // also that a semicolon on its own is a statement. This is ambiguous
@@ -153,13 +227,13 @@ module.exports = grammar({
       // text as a single statement since otherwise function calls would not be
       // parsed as such.
       return prec.right(seq(
-        choice($.typeLiteralExpr, $.parenthExpr, $.StringLiteral),
+        choice($.newExpr, $.thisSuperExpr, $.typeLiteralExpr, $.parenthExpr, $.StringLiteral),
         PossiblyEmpty.indirectMemberAccess($),
         optional(choice(
           $.incrementOp,
           seq($.assignmentOp, $.expression),
         )),
-      )); // XXX incomplete
+      ));
     },
     statementBlock: $ => $.statementBlockBody,
     statementBlockBody: $ => seq("{", repeat($.statement), "}"),
@@ -179,10 +253,13 @@ module.exports = grammar({
     typeLiteralType: $ => $.typeLiteral,
     typeLiteralExpr: $ => $.typeLiteral,
     typeLiteralList: $ => $.typeLiteral,
-    type: $ => choice(seq($.classOrInterfaceType, repeat(seq("[", "]"))), seq("block", $.blockLiteral)),
+    type: $ => {
+      // XXX check associativity
+      return prec.right(choice(seq($.classOrInterfaceType, repeat(seq("[", "]"))), seq("block", $.blockLiteral)));
+    },
     classOrInterfaceType: $ => {
-      // XXX is it correct that this is right-associative?
-      return prec.right(seq($.idclassOrInterfaceType, PossiblyEmpty.typeArguments($), repeat(seq(".", $.id, PossiblyEmpty.typeArguments($)))));
+      // XXX is it correct that this is left-associative?
+      return prec.left(seq($.idclassOrInterfaceType, PossiblyEmpty.typeArguments($), repeat(seq(".", $.id, PossiblyEmpty.typeArguments($)))));
     },
     // "typeArguments" is possibly empty
     typeArgument: $ => choice($.typeLiteralType, seq("?", optional(seq(choice("extends", "super"), $.typeLiteralType)))),
@@ -204,22 +281,11 @@ module.exports = grammar({
     multiplicativeExpr: $ => prec.left(seq($.typeAsExpr, repeat(seq($.multiplicativeOp, $.typeAsExpr)))),
     typeAsExpr: $ => prec.left(seq($.unaryExpr, repeat(seq($.typeAsOp, $.unaryExpr)))),
     unaryExpr: $ => choice(seq(choice("+", "-", "!-"), $.unaryExprNotPlusMinus), $.unaryExprNotPlusMinus),
-    unaryExprNotPlusMinus: $ => choice(seq($.unaryOp, $.unaryExpr), seq("\\", $.blockExpr), $.evalExpr, $.primaryExpr),
+    unaryExprNotPlusMinus: $ => {
+      /// XXX check that this precedence is correct
+      return prec(1, choice(seq($.unaryOp, $.unaryExpr), seq("\\", $.blockExpr), $.evalExpr, $.primaryExpr));
+    },
     blockExpr: $ => seq(optional($.parameterDeclarationList), "->", choice($.expression, $.statementBlock)),
-    evalExpr: $ => seq("eval", "(", $.expression, ")"),
-    featureLiteral: $ => {
-      // XXX check that it's correct for this to be right-associative
-      return prec.right(seq("#", choice($.id, "construct"), PossiblyEmpty.typeArguments($), PossiblyEmpty.optionalArguments($)));
-    },
-    primaryExpr: $ => {
-      // XXX check that it's correct for this to be right-associative
-      return prec.right(seq(choice(
-        $.literal,
-        $.typeLiteralExpr,
-        $.parenthExpr,
-      ), PossiblyEmpty.indirectMemberAccess($))); // XXX incomplete
-    },
-    parenthExpr: $ => seq("(", $.expression, ")"),
     parameterDeclarationList: $ => seq($.parameterDeclaration, repeat(seq(",", $.parameterDeclaration))),
     parameterDeclaration: $ => seq(
       repeat($.annotation),
@@ -232,11 +298,60 @@ module.exports = grammar({
       )),
     ),
     annotationArguments: $ => $.arguments,
+    arguments: $ => seq("(", optional(seq($.argExpression, repeat(seq(",", $.argExpression)))), ")"),
     // "optionArguments" is possibly empty
-    arguments: $ => seq("(", optional(seq($.argExpression, repeat(seq(", ", $.argExpression)))), ")"),
     argExpression: $ => choice($.namedArgExpression, $.expression),
     namedArgExpression: $ => seq(":", $.id, "=", $.expression),
-    literal: $ => choice($.NumberLiteral, $.featureLiteral, $.StringLiteral, $.CharLiteral, "true", "false", "null"),
+    evalExpr: $ => seq("eval", "(", $.expression, ")"),
+    featureLiteral: $ => {
+      // XXX check that it's correct for this to be right-associative
+      return prec.right(seq("#", choice($.id, "construct"), PossiblyEmpty.typeArguments($), PossiblyEmpty.optionalArguments($)));
+    },
+    standAloneDataStructureInitialization: $ => {
+      // XXX check that the precedence is correct here
+      // This needs higher precedence than the "statementBlockBody" rule as their syntaxes overlap.
+      return prec(1, seq("{", optional($.initializerExpression), "}"));
+    },
+    primaryExpr: $ => {
+      // XXX check that it's correct for this to be right-associative
+      // XXX check that giving primaryExpr higher precedence is correct. The
+      // intuition is that if some text can be interpreted as an expression
+      // then it should be interpreted as an expression (rather than as a
+      // statement for example).
+      return prec(1, prec.right(seq(choice(
+        $.newExpr,
+        $.thisSuperExpr,
+        $.literal,
+        $.typeLiteralExpr,
+        $.parenthExpr,
+        $.standAloneDataStructureInitialization,
+      ), PossiblyEmpty.indirectMemberAccess($))));
+    },
+    parenthExpr: $ => seq("(", $.expression, ")"),
+    newExpr: $ => {
+      // XXX check associativity
+      return prec.right(seq(
+        "new",
+        optional($.classOrInterfaceType),
+        choice(
+          seq($.arguments, optional(seq("{", choice(PossiblyEmpty.initializer($), PossiblyEmpty.anonymousInnerClass($)), "}"))),
+          seq("[", choice(
+            seq("]", repeat(seq("[", "]")), $.arrayInitializer),
+            seq($.expression, "]", repeat(seq("[", $.expression, "]")), repeat(seq("[", "]"))),
+          )),
+        ),
+      ));
+    },
+    // "anonymousInnerClass" is possibly empty
+    arrayInitializer: $ => seq("{", optional(seq($.expression, repeat(seq(",", $.expression)))), "}"),
+    // "initializer" is possibly empty
+    initializerExpression: $ => choice($.mapInitializerList, $.arrayValueList),
+    arrayValueList: $ => seq($.expression, repeat(seq(",", $.expression))),
+    mapInitializerList: $ => seq($.expression, "->", $.expression, repeat(seq(",", $.expression, "->", $.expression))),
+    objectInitializer: $ => seq($.initializerAssignment, repeat(seq(",", $.initializerAssignment))),
+    initializerAssignment: $ => seq(":", $.id, "=", $.expression),
+    // "indirectMemberAccess" is possibly empty
+    literal: $ => prec(1, choice($.NumberLiteral, $.featureLiteral, $.StringLiteral, $.CharLiteral, "true", "false", "null")),
     orOp: _ => choice("||", "or"),
     andOp: _ => choice("&&", "and"),
     assignmentOp: _ => choice("=", "+=", "-=", "*=", "/=", "&=", "&&=", "|=", "||=", "^=", "%=", seq("<", "<", "="), seq(">", ">", ">", "="), seq(">", ">", "=")),
@@ -274,20 +389,23 @@ module.exports = grammar({
     NumberLiteral: $ => choice("NaN", "Infinity", $.HexLiteral, $.BinLiteral, $.IntOrFloatPointLiteral),
     BinLiteral: $ => seq(choice("0b", "0B"), choice("0", "1"), repeat(choice("0", "1")), optional($.IntegerTypeSuffix)),
     HexLiteral: $ => seq(choice("0x", "0X"), $.HexDigit, repeat($.HexDigit), optional(choice("s", "S", "l", "L"))),
-    IntOrFloatPointLiteral: $ => choice(
-      seq(".", $.Digit, repeat($.Digit), optional($.FloatTypeSuffix)),
-      seq($.Digit, repeat($.Digit),
-        // In Gosu's grammar this is not explicitly optional but of the choices is the empty pattern which is equivalent but not allowed in tree-sitter.
-        optional(
-          choice(
-            seq(".", $.Digit, repeat($.Digit), optional($.Exponent), optional($.FloatTypeSuffix)),
-            seq($.Exponent, optional($.FloatTypeSuffix)),
-            $.FloatTypeSuffix,
-            $.IntegerTypeSuffix,
+    IntOrFloatPointLiteral: $ => {
+      // XXX check associatiivty
+      return prec.right(choice(
+        seq(".", $.Digit, repeat($.Digit), optional($.FloatTypeSuffix)),
+        seq($.Digit, repeat($.Digit),
+          // In Gosu's grammar this is not explicitly optional but of the choices is the empty pattern which is equivalent but not allowed in tree-sitter.
+          optional(
+            choice(
+              seq(".", $.Digit, repeat($.Digit), optional($.Exponent), optional($.FloatTypeSuffix)),
+              seq($.Exponent, optional($.FloatTypeSuffix)),
+              $.FloatTypeSuffix,
+              $.IntegerTypeSuffix,
+            ),
           ),
         ),
-      ),
-    ),
+      ));
+    },
     CharLiteral: $ => {
       // In Gosu's syntax, char literals have the same syntax as
       // single-character single-quoted string literals. Give char literals
@@ -297,14 +415,19 @@ module.exports = grammar({
     StringLiteral: $ => choice(seq("'", repeat(choice($.EscapeSequence, $.any_character)), "'"), seq('"', repeat(choice($.EscapeSequence, $.any_character)), '"')),
     HexDigit: $ => choice($.Digit, /[A-F]/, /[a-f]/),
     IntegerTypeSuffix: _ => choice("l", "L", "s", "S", "bi", "BI", "b", "B"),
+    // "Letter" is defined above
     Digit: _ => Digit,
+    // "NonZeroDigit" is unused in any rule
     ZeroToSeven: _ => /[0-7]/,
     Exponent: $ => seq(choice("e", "E"), optional(choice("+", "-")), $.Digit, repeat($.Digit)),
     FloatTypeSuffix: _ => choice("f", "F", "d", "D", "bd", "BD"),
     EscapeSequence: $ => choice(seq("\\", choice("v", "a", "b", "t", "n", "f", "r", '"', "'", "\\", "$", "<")), $.UnicodeEscape, $.OctalEscape),
     OctalEscape: $ => choice(seq("\\", /0-3/, $.ZeroToSeven, $.ZeroToSeven), seq("\\", $.ZeroToSeven, $.ZeroToSeven), seq("\\", $.ZeroToSeven)),
     UnicodeEscape: $ => seq("\\u", $.HexDigit, $.HexDigit, $.HexDigit, $.HexDigit),
-    any_character: _ => /./,
+    any_character: _ => {
+      // This rule is not defined in Gosu's grammar but it is used. Assuming it's equivalent to the "." in common regex syntax.
+      return /./;
+    },
     WS: _ => /\s/,
     COMMENT: _ => /\/\*([^\*]|(\*[^\/]))*\*\//,
     LINE_COMMENT: _ => /\/\/[^\n\r]*/,

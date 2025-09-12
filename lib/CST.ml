@@ -8,28 +8,28 @@
 open! Sexplib.Conv
 open Tree_sitter_run
 
-type equalityop = [
-    `EQEQEQ of Token.t (* "===" *)
-  | `BANGEQEQ of Token.t (* "!==" *)
-  | `EQEQ of Token.t (* "==" *)
-  | `BANGEQ of Token.t (* "!=" *)
+type anon_choice_DOT_2e9198d = [
+    `DOT of Token.t (* "." *)
+  | `QMARKDOT of Token.t (* "?." *)
+  | `STARDOT of Token.t (* "*." *)
 ]
 
-type typeasop = [
-    `Typeas of Token.t (* "typeas" *)
-  | `As of Token.t (* "as" *)
+type integertypesuffix = [
+    `L_2db95e8 of Token.t (* "l" *)
+  | `L_d20caec of Token.t (* "L" *)
+  | `S_03c7c0a of Token.t (* "s" *)
+  | `S_5dbc98d of Token.t (* "S" *)
+  | `Bi of Token.t (* "bi" *)
+  | `BI of Token.t (* "BI" *)
+  | `B_92eb5ff of Token.t (* "b" *)
+  | `B_9d5ed67 of Token.t (* "B" *)
 ]
 
-type anon_choice_0_eadfa15 = [
-    `X_0 of Token.t (* "0" *)
-  | `X_1 of Token.t (* "1" *)
-]
-
-type ident = Token.t
-
-type incrementop = [
-    `PLUSPLUS of Token.t (* "++" *)
-  | `DASHDASH of Token.t (* "--" *)
+type intervalop = [
+    `DOTDOT of Token.t (* ".." *)
+  | `BARDOTDOT of Token.t (* "|.." *)
+  | `DOTDOTBAR of Token.t (* "..|" *)
+  | `BARDOTDOTBAR of Token.t (* "|..|" *)
 ]
 
 type assignmentop = [
@@ -52,16 +52,6 @@ type assignmentop = [
   | `GT_GT_EQ of (Token.t (* ">" *) * Token.t (* ">" *) * Token.t (* "=" *))
 ]
 
-type pat_0_3 = Token.t (* pattern 0-3 *)
-
-type unaryop = [
-    `TILDE of Token.t (* "~" *)
-  | `BANG of Token.t (* "!" *)
-  | `Not of Token.t (* "not" *)
-  | `Typeof of Token.t (* "typeof" *)
-  | `Stat of Token.t (* "statictypeof" *)
-]
-
 type additiveop = [
     `PLUS of Token.t (* "+" *)
   | `DASH of Token.t (* "-" *)
@@ -71,27 +61,21 @@ type additiveop = [
   | `BANGDASH of Token.t (* "!-" *)
 ]
 
+type anon_choice_0_eadfa15 = [
+    `X_0 of Token.t (* "0" *)
+  | `X_1 of Token.t (* "1" *)
+]
+
+type equalityop = [
+    `EQEQEQ of Token.t (* "===" *)
+  | `BANGEQEQ of Token.t (* "!==" *)
+  | `EQEQ of Token.t (* "==" *)
+  | `BANGEQ of Token.t (* "!=" *)
+]
+
+type ident = Token.t
+
 type digit = Token.t (* pattern [0-9] *)
-
-type zerotoseven = Token.t (* pattern [0-7] *)
-
-type integertypesuffix = [
-    `L_2db95e8 of Token.t (* "l" *)
-  | `L_d20caec of Token.t (* "L" *)
-  | `S_03c7c0a of Token.t (* "s" *)
-  | `S_5dbc98d of Token.t (* "S" *)
-  | `Bi of Token.t (* "bi" *)
-  | `BI of Token.t (* "BI" *)
-  | `B_92eb5ff of Token.t (* "b" *)
-  | `B_9d5ed67 of Token.t (* "B" *)
-]
-
-type relop = [
-    `LT_EQ of (Token.t (* "<" *) * Token.t (* "=" *))
-  | `GT_EQ of (Token.t (* ">" *) * Token.t (* "=" *))
-  | `LT of Token.t (* "<" *)
-  | `GT of Token.t (* ">" *)
-]
 
 type floattypesuffix = [
     `F_8fa14cd of Token.t (* "f" *)
@@ -102,7 +86,34 @@ type floattypesuffix = [
   | `BD of Token.t (* "BD" *)
 ]
 
-type pat_dd18f70 = Token.t (* pattern [a-f] *)
+type pat_0_3 = Token.t (* pattern 0-3 *)
+
+type incrementop = [
+    `PLUSPLUS of Token.t (* "++" *)
+  | `DASHDASH of Token.t (* "--" *)
+]
+
+type unaryop = [
+    `TILDE of Token.t (* "~" *)
+  | `BANG of Token.t (* "!" *)
+  | `Not of Token.t (* "not" *)
+  | `Typeof of Token.t (* "typeof" *)
+  | `Stat of Token.t (* "statictypeof" *)
+]
+
+type zerotoseven = Token.t (* pattern [0-7] *)
+
+type typeasop = [
+    `Typeas of Token.t (* "typeas" *)
+  | `As of Token.t (* "as" *)
+]
+
+type anon_choice_LBRACK_c99f14b = [
+    `LBRACK of Token.t (* "[" *)
+  | `QMARKLBRACK of Token.t (* "?[" *)
+]
+
+type pat_dcaf70f = Token.t (* pattern [A-F] *)
 
 type bitshiftop = [
     `LT_LT of (Token.t (* "<" *) * Token.t (* "<" *))
@@ -110,7 +121,16 @@ type bitshiftop = [
   | `GT_GT of (Token.t (* ">" *) * Token.t (* ">" *))
 ]
 
-type pat_dcaf70f = Token.t (* pattern [A-F] *)
+type pat_dd18f70 = Token.t (* pattern [a-f] *)
+
+type thissuperexpr = [
+    `This of Token.t (* "this" *)
+  | `Super of Token.t (* "super" *)
+]
+
+type orop = [ `BARBAR of Token.t (* "||" *) | `Or of Token.t (* "or" *) ]
+
+type any_character = Token.t (* pattern . *)
 
 type multiplicativeop = [
     `STAR of Token.t (* "*" *)
@@ -122,16 +142,12 @@ type multiplicativeop = [
   | `QMARKPERC of Token.t (* "?%" *)
 ]
 
-type any_character = Token.t (* pattern . *)
-
-type intervalop = [
-    `DOTDOT of Token.t (* ".." *)
-  | `BARDOTDOT of Token.t (* "|.." *)
-  | `DOTDOTBAR of Token.t (* "..|" *)
-  | `BARDOTDOTBAR of Token.t (* "|..|" *)
+type relop = [
+    `LT_EQ of (Token.t (* "<" *) * Token.t (* "=" *))
+  | `GT_EQ of (Token.t (* ">" *) * Token.t (* "=" *))
+  | `LT of Token.t (* "<" *)
+  | `GT of Token.t (* ">" *)
 ]
-
-type orop = [ `BARBAR of Token.t (* "||" *) | `Or of Token.t (* "or" *) ]
 
 type andop = [ `AMPAMP of Token.t (* "&&" *) | `And of Token.t (* "and" *) ]
 
@@ -159,9 +175,9 @@ type hexdigit = [
   | `Pat_dd18f70 of pat_dd18f70
 ]
 
-type indexvar = (Token.t (* "index" *) * ident (*tok*))
-
 type iteratorvar = (Token.t (* "iterator" *) * ident (*tok*))
+
+type indexvar = (Token.t (* "index" *) * ident (*tok*))
 
 type dotpathword = (
     ident (*tok*)
@@ -212,30 +228,6 @@ type namespacestatement = (
   * Token.t (* ";" *) list (* zero or more *)
 )
 
-type numberliteral = [
-    `NaN of Token.t (* "NaN" *)
-  | `Infi of Token.t (* "Infinity" *)
-  | `Hexl of (
-        [ `X_0x of Token.t (* "0x" *) | `X_0X of Token.t (* "0X" *) ]
-      * hexdigit
-      * hexdigit list (* zero or more *)
-      * [
-            `S_03c7c0a of Token.t (* "s" *)
-          | `S_5dbc98d of Token.t (* "S" *)
-          | `L_2db95e8 of Token.t (* "l" *)
-          | `L_d20caec of Token.t (* "L" *)
-        ]
-          option
-    )
-  | `Binl of (
-        [ `X_0b of Token.t (* "0b" *) | `X_0B of Token.t (* "0B" *) ]
-      * anon_choice_0_eadfa15
-      * anon_choice_0_eadfa15 list (* zero or more *)
-      * integertypesuffix option
-    )
-  | `Into of intorfloatpointliteral
-]
-
 type escapesequence = [
     `BSLASH_choice_v of (
         Token.t (* "\\" *)
@@ -258,6 +250,30 @@ type escapesequence = [
         Token.t (* "\\u" *) * hexdigit * hexdigit * hexdigit * hexdigit
     )
   | `Octa of octalescape
+]
+
+type numberliteral = [
+    `NaN of Token.t (* "NaN" *)
+  | `Infi of Token.t (* "Infinity" *)
+  | `Hexl of (
+        [ `X_0x of Token.t (* "0x" *) | `X_0X of Token.t (* "0X" *) ]
+      * hexdigit
+      * hexdigit list (* zero or more *)
+      * [
+            `S_03c7c0a of Token.t (* "s" *)
+          | `S_5dbc98d of Token.t (* "S" *)
+          | `L_2db95e8 of Token.t (* "l" *)
+          | `L_d20caec of Token.t (* "L" *)
+        ]
+          option
+    )
+  | `Binl of (
+        [ `X_0b of Token.t (* "0b" *) | `X_0B of Token.t (* "0B" *) ]
+      * anon_choice_0_eadfa15
+      * anon_choice_0_eadfa15 list (* zero or more *)
+      * integertypesuffix option
+    )
+  | `Into of intorfloatpointliteral
 ]
 
 type usesstatementlist = (
@@ -298,6 +314,13 @@ and annotation = (
 
 and annotationarguments = arguments
 
+and anon_LT_type_rep_COMMA_type_GT_4296e12 = (
+    Token.t (* "<" *)
+  * typevariabledefinition
+  * (Token.t (* "," *) * typevariabledefinition) list (* zero or more *)
+  * Token.t (* ">" *)
+)
+
 and anon_LT_type_rep_COMMA_type_GT_b734705 = (
     Token.t (* "<" *)
   * typeargument
@@ -306,12 +329,41 @@ and anon_LT_type_rep_COMMA_type_GT_b734705 = (
 )
 
 and anon_choice_COLON_type_7487407 = [
-    `COLON_type of (Token.t (* ":" *) * typeliterallist)
+    `COLON_type of (Token.t (* ":" *) * typeliteraltype)
   | `Bloc of blocktypeliteral
 ]
 
-and anon_rep_choice_annots_36889ef =
-  [ `Args of annotationarguments ] list (* zero or more *)
+and anon_choice_anno_2451648 = [
+    `Anno of annotation
+  | `Priv of Token.t (* "private" *)
+  | `Inte of Token.t (* "internal" *)
+  | `Prot of Token.t (* "protected" *)
+  | `Public of Token.t (* "public" *)
+  | `Static of Token.t (* "static" *)
+  | `Abst of Token.t (* "abstract" *)
+  | `Over of Token.t (* "override" *)
+  | `Final of Token.t (* "final" *)
+  | `Tran of Token.t (* "transient" *)
+]
+
+and anon_choice_choice_DOT_idall_opt_LT_type_rep_COMMA_type_GT_16bc336 = [
+    `Choice_DOT_idall_opt_LT_type_rep_COMMA_type_GT of (
+        anon_choice_DOT_2e9198d
+      * ident (*tok*)
+      * anon_LT_type_rep_COMMA_type_GT_b734705 option
+    )
+  | `Feat of featureliteral
+  | `Choice_LBRACK_exp_RBRACK of (
+        anon_choice_LBRACK_c99f14b * expression * Token.t (* "]" *)
+    )
+  | `Args of annotationarguments
+]
+
+and anon_imples_clas_rep_COMMA_clas_2b6fbcb = (
+    Token.t (* "implements" *)
+  * classorinterfacetype
+  * (Token.t (* "," *) * classorinterfacetype) list (* zero or more *)
+)
 
 and argexpression = [
     `Name of (
@@ -324,10 +376,21 @@ and arguments = (
     Token.t (* "(" *)
   * (
         argexpression
-      * (Token.t (* ", " *) * argexpression) list (* zero or more *)
+      * (Token.t (* "," *) * argexpression) list (* zero or more *)
     )
       option
   * Token.t (* ")" *)
+)
+
+and arrayinitializer = (
+    Token.t (* "{" *)
+  * arrayvaluelist option
+  * Token.t (* "}" *)
+)
+
+and arrayvaluelist = (
+    expression
+  * (Token.t (* "," *) * expression) list (* zero or more *)
 )
 
 and assertstatement = (
@@ -338,11 +401,14 @@ and assertstatement = (
 
 and assignmentormethodcall = (
     [
-        `Type of typeliteralexpr
+        `Newe of newexpr
+      | `This of thissuperexpr
+      | `Type of typeliteralexpr
       | `Pare of parenthexpr
       | `Stri of stringliteral
     ]
-  * anon_rep_choice_annots_36889ef
+  * anon_choice_choice_DOT_idall_opt_LT_type_rep_COMMA_type_GT_16bc336
+      list (* zero or more *)
   * [ `Incr of incrementop | `Assi_exp of (assignmentop * expression) ]
       option
 )
@@ -381,7 +447,7 @@ and blockliteral = (
     )
       option
   * Token.t (* ")" *)
-  * (Token.t (* ":" *) * typeliterallist) option
+  * (Token.t (* ":" *) * typeliteraltype) option
 )
 
 and blockliteralarg = [
@@ -395,7 +461,7 @@ and blockliteralarg = [
     )
   | `Opt_id_COLON_type_opt_EQ_exp of (
         (ident (*tok*) * Token.t (* ":" *)) option
-      * typeliterallist
+      * typeliteraltype
       * (Token.t (* "=" *) * expression) option
     )
 ]
@@ -407,9 +473,15 @@ and catchclause = (
   * Token.t (* "(" *)
   * Token.t (* "var" *) option
   * ident (*tok*)
-  * (Token.t (* ":" *) * typeliterallist) option
+  * (Token.t (* ":" *) * typeliteraltype) option
   * Token.t (* ")" *)
   * functionbody
+)
+
+and classbody = (
+    Token.t (* "{" *)
+  * declaration list (* zero or more *)
+  * Token.t (* "}" *)
 )
 
 and classorinterfacetype = (
@@ -444,9 +516,58 @@ and conditionalorexpr = (
   * (orop * conditionalandexpr) list (* zero or more *)
 )
 
+and constructordefn = (
+    Token.t (* "construct" *)
+  * parameters
+  * (Token.t (* ":" *) * typeliteraltype) option
+)
+
+and declaration = (
+    anon_choice_anno_2451648 list (* zero or more *)
+  * [
+        `Func_opt_func of (functiondefn * functionbody option)
+      | `Cons_func of (constructordefn * functionbody)
+      | `Prop_opt_func of (propertydefn * functionbody option)
+      | `Fiel of fielddefn
+      | `Dele of delegatedefn
+      | `Gclass of gclass
+      | `Gint of ginterfaceorstructure
+      | `Genum of genum
+    ]
+  * Token.t (* ";" *) option
+)
+
+and delegatedefn = (
+    Token.t (* "delegate" *) * ident (*tok*) * delegatestatement
+)
+
+and delegatestatement = (
+    (Token.t (* ":" *) * typeliteraltype) option
+  * Token.t (* "represents" *)
+  * typeliteraltype
+  * (Token.t (* "," *) * typeliteraltype) list (* zero or more *)
+  * (Token.t (* "=" *) * expression) option
+)
+
 and dowhilestatement = (
     Token.t (* "do" *) * statement * Token.t (* "while" *)
   * Token.t (* "(" *) * expression * Token.t (* ")" *)
+)
+
+and enumbody = (
+    Token.t (* "{" *)
+  * enumconstants option
+  * declaration list (* zero or more *)
+  * Token.t (* "}" *)
+)
+
+and enumconstant = (ident (*tok*) * annotationarguments option)
+
+and enumconstants = (
+    enumconstant
+  * (Token.t (* "," *) * enumconstant) list (* zero or more *)
+  * Token.t (* "," *) option
+  * Token.t (* ";" *) option
 )
 
 and equalityexpr = (
@@ -459,6 +580,22 @@ and evalexpr = (
 )
 
 and expression = conditionalexpr
+
+and featureliteral = (
+    Token.t (* "#" *)
+  * [ `Id of ident (*tok*) | `Cons of Token.t (* "construct" *) ]
+  * anon_LT_type_rep_COMMA_type_GT_b734705 option
+  * annotationarguments option
+)
+
+and fielddefn = (
+    Token.t (* "var" *)
+  * ident (*tok*)
+  * anon_choice_COLON_type_7487407 option
+  * (Token.t (* "as" *) * Token.t (* "readonly" *) option * ident (*tok*))
+      option
+  * (Token.t (* "=" *) * expression) option
+)
 
 and foreachstatement = (
     [ `Fore of Token.t (* "foreach" *) | `For of Token.t (* "for" *) ]
@@ -479,6 +616,47 @@ and foreachstatement = (
 
 and functionbody = statementblock
 
+and functiondefn = (
+    Token.t (* "function" *)
+  * ident (*tok*)
+  * anon_LT_type_rep_COMMA_type_GT_4296e12 option
+  * parameters
+  * (Token.t (* ":" *) * typeliteraltype) option
+)
+
+and gclass = (
+    Token.t (* "class" *)
+  * ident (*tok*)
+  * anon_LT_type_rep_COMMA_type_GT_4296e12 option
+  * (Token.t (* "extends" *) * classorinterfacetype) option
+  * anon_imples_clas_rep_COMMA_clas_2b6fbcb option
+  * classbody
+)
+
+and genum = (
+    Token.t (* "enum" *)
+  * ident (*tok*)
+  * anon_LT_type_rep_COMMA_type_GT_4296e12 option
+  * anon_imples_clas_rep_COMMA_clas_2b6fbcb option
+  * enumbody
+)
+
+and ginterfaceorstructure = (
+    [
+        `Inte of Token.t (* "interface" *)
+      | `Stru of Token.t (* "structure" *)
+    ]
+  * ident (*tok*)
+  * anon_LT_type_rep_COMMA_type_GT_4296e12 option
+  * (
+        Token.t (* "extends" *)
+      * classorinterfacetype
+      * (Token.t (* "," *) * classorinterfacetype) list (* zero or more *)
+    )
+      option
+  * interfacebody
+)
+
 and ifstatement = (
     Token.t (* "if" *)
   * Token.t (* "(" *)
@@ -489,16 +667,44 @@ and ifstatement = (
   * (Token.t (* "else" *) * statement) option
 )
 
+and initializerassignment = (
+    Token.t (* ":" *) * ident (*tok*) * Token.t (* "=" *) * expression
+)
+
+and initializerexpression = [
+    `Mapi of (
+        expression
+      * Token.t (* "->" *)
+      * expression
+      * (Token.t (* "," *) * expression * Token.t (* "->" *) * expression)
+          list (* zero or more *)
+    )
+  | `Arra of arrayvaluelist
+]
+
+and interfacebody = (
+    Token.t (* "{" *)
+  * (
+        anon_choice_anno_2451648 list (* zero or more *)
+      * [
+            `Func of functiondefn
+          | `Prop of propertydefn
+          | `Fiel of fielddefn
+          | `Gclass of gclass
+          | `Gint of ginterfaceorstructure
+          | `Genum of genum
+        ]
+      * Token.t (* ";" *) option
+    )
+      list (* zero or more *)
+  * Token.t (* "}" *)
+)
+
 and intervalexpr = (bitshiftexpr * (intervalop * bitshiftexpr) option)
 
 and literal = [
     `Numb of numberliteral
-  | `Feat of (
-        Token.t (* "#" *)
-      * [ `Id of ident (*tok*) | `Cons of Token.t (* "construct" *) ]
-      * anon_LT_type_rep_COMMA_type_GT_b734705 option
-      * annotationarguments option
-    )
+  | `Feat of featureliteral
   | `Stri of stringliteral
   | `Char of (
         Token.t (* "'" *) * anon_choice_esca_b61eefe * Token.t (* "'" *)
@@ -520,6 +726,54 @@ and multiplicativeexpr = (
   * (multiplicativeop * typeasexpr) list (* zero or more *)
 )
 
+and newexpr = (
+    Token.t (* "new" *)
+  * classorinterfacetype option
+  * [
+        `Args_opt_LCURL_choice_opt_choice_init_RCURL of (
+            annotationarguments
+          * (
+                Token.t (* "{" *)
+              * [
+                    `Opt_choice_init of
+                      [
+                          `Init of initializerexpression
+                        | `Obje of objectinitializer
+                      ]
+                        option
+                  | `Rep_decl of declaration list (* zero or more *)
+                ]
+              * Token.t (* "}" *)
+            )
+              option
+        )
+      | `LBRACK_choice_RBRACK_rep_LBRACK_RBRACK_arra of (
+            Token.t (* "[" *)
+          * [
+                `RBRACK_rep_LBRACK_RBRACK_arra of (
+                    Token.t (* "]" *)
+                  * (Token.t (* "[" *) * Token.t (* "]" *))
+                      list (* zero or more *)
+                  * arrayinitializer
+                )
+              | `Exp_RBRACK_rep_LBRACK_exp_RBRACK_rep_LBRACK_RBRACK of (
+                    expression
+                  * Token.t (* "]" *)
+                  * (Token.t (* "[" *) * expression * Token.t (* "]" *))
+                      list (* zero or more *)
+                  * (Token.t (* "[" *) * Token.t (* "]" *))
+                      list (* zero or more *)
+                )
+            ]
+        )
+    ]
+)
+
+and objectinitializer = (
+    initializerassignment
+  * (Token.t (* "," *) * initializerassignment) list (* zero or more *)
+)
+
 and parameterdeclaration = (
     annotation list (* zero or more *)
   * Token.t (* "final" *) option
@@ -527,7 +781,7 @@ and parameterdeclaration = (
   * [
         `COLON_type_opt_EQ_exp of (
             Token.t (* ":" *)
-          * typeliterallist
+          * typeliteraltype
           * (Token.t (* "=" *) * expression) option
         )
       | `Bloc of blocktypeliteral
@@ -541,7 +795,21 @@ and parameterdeclarationlist = (
   * (Token.t (* "," *) * parameterdeclaration) list (* zero or more *)
 )
 
+and parameters = (
+    Token.t (* "(" *)
+  * parameterdeclarationlist option
+  * Token.t (* ")" *)
+)
+
 and parenthexpr = (Token.t (* "(" *) * expression * Token.t (* ")" *))
+
+and propertydefn = (
+    Token.t (* "property" *)
+  * [ `Get of Token.t (* "get" *) | `Set of Token.t (* "set" *) ]
+  * ident (*tok*)
+  * parameters
+  * (Token.t (* ":" *) * typeliteraltype) option
+)
 
 and relationalexpr = (
     intervalexpr
@@ -553,6 +821,12 @@ and relationalexpr = (
 )
 
 and returnstatement = (Token.t (* "return" *) * expression option)
+
+and standalonedatastructureinitialization = (
+    Token.t (* "{" *)
+  * initializerexpression option
+  * Token.t (* "}" *)
+)
 
 and statement = [
     `Choice_ifst_opt_SEMI of (
@@ -656,6 +930,11 @@ and typeliterallist = typeliteral
 
 and typeliteraltype = typeliteral
 
+and typevariabledefinition = (
+    ident (*tok*)
+  * (Token.t (* "extends" *) * typeliterallist) option
+)
+
 and unaryexpr = [
     `Choice_PLUS_unarys of (
         [
@@ -673,8 +952,16 @@ and unaryexprnotplusminus = [
   | `BSLASH_bloc of (Token.t (* "\\" *) * blockexpr)
   | `Eval of evalexpr
   | `Prim of (
-        [ `Lit of literal | `Type of typeliteralexpr | `Pare of parenthexpr ]
-      * anon_rep_choice_annots_36889ef
+        [
+            `Newe of newexpr
+          | `This of thissuperexpr
+          | `Lit of literal
+          | `Type of typeliteralexpr
+          | `Pare of parenthexpr
+          | `Stan of standalonedatastructureinitialization
+        ]
+      * anon_choice_choice_DOT_idall_opt_LT_type_rep_COMMA_type_GT_16bc336
+          list (* zero or more *)
     )
 ]
 
@@ -698,119 +985,63 @@ and whilestatement = (
   * Token.t (* ")" *) * statement
 )
 
-type fielddefn = (
-    Token.t (* "var" *)
-  * ident (*tok*)
-  * anon_choice_COLON_type_7487407 option
-  * (Token.t (* "as" *) * Token.t (* "readonly" *) option * ident (*tok*))
-      option
-  * (Token.t (* "=" *) * expression) option
-)
-
-type typevariabledefinition = (
-    ident (*tok*)
-  * (Token.t (* "extends" *) * typeliterallist) option
-)
-
-type parameters = (
-    Token.t (* "(" *)
-  * parameterdeclarationlist option
-  * Token.t (* ")" *)
-)
-
-type anon_choice_anno_2451648 = [
-    `Anno of annotation
-  | `Priv of Token.t (* "private" *)
-  | `Inte of Token.t (* "internal" *)
-  | `Prot of Token.t (* "protected" *)
-  | `Public of Token.t (* "public" *)
-  | `Static of Token.t (* "static" *)
-  | `Abst of Token.t (* "abstract" *)
-  | `Over of Token.t (* "override" *)
-  | `Final of Token.t (* "final" *)
-  | `Tran of Token.t (* "transient" *)
-]
-
-type anon_LT_type_rep_COMMA_type_GT_4296e12 = (
-    Token.t (* "<" *)
-  * typevariabledefinition
-  * (Token.t (* "," *) * typevariabledefinition) list (* zero or more *)
-  * Token.t (* ">" *)
-)
-
-type constructordefn = (
-    Token.t (* "construct" *)
-  * parameters
-  * (Token.t (* ":" *) * typeliterallist) option
-)
-
-type functiondefn = (
-    Token.t (* "function" *)
-  * ident (*tok*)
-  * anon_LT_type_rep_COMMA_type_GT_4296e12 option
-  * parameters
-  * (Token.t (* ":" *) * typeliterallist) option
-)
-
-type declaration = (
-    anon_choice_anno_2451648 list (* zero or more *)
-  * [
-        `Func_opt_func of (functiondefn * functionbody option)
-      | `Cons_func of (constructordefn * functionbody)
-      | `Fiel of fielddefn
-    ]
-  * Token.t (* ";" *) option
-)
-
-type classbody = (
+type enhancementbody = (
     Token.t (* "{" *)
-  * declaration list (* zero or more *)
+  * (
+        anon_choice_anno_2451648 list (* zero or more *)
+      * [
+            `Func_func of (functiondefn * functionbody)
+          | `Prop_func of (propertydefn * functionbody)
+        ]
+      * Token.t (* ";" *) option
+    )
+      list (* zero or more *)
   * Token.t (* "}" *)
 )
 
-type gclass = (
-    Token.t (* "class" *)
+type genhancement = (
+    Token.t (* "enhancement" *)
   * ident (*tok*)
   * anon_LT_type_rep_COMMA_type_GT_4296e12 option
-  * (Token.t (* "extends" *) * classorinterfacetype) option
-  * (
-        Token.t (* "implements" *)
-      * classorinterfacetype
-      * (Token.t (* "," *) * classorinterfacetype) list (* zero or more *)
-    )
-      option
-  * classbody
+  * Token.t (* ":" *)
+  * classorinterfacetype
+  * (Token.t (* "[" *) * Token.t (* "]" *)) list (* zero or more *)
+  * enhancementbody
 )
 
 type source_file = (
     (Token.t (* "package" *) * namespacestatement) option
   * usesstatementlist option
   * anon_choice_anno_2451648 list (* zero or more *)
-  * [ `Gclass of gclass ]
+  * [
+        `Gclass of gclass
+      | `Gint of ginterfaceorstructure
+      | `Genum of genum
+      | `Genh of genhancement
+    ]
 )
-
-type comment (* inlined *) = Token.t (* pattern \/\*([^\*]|(\*[^\/]))*\*\/ *)
-
-type thissuperexpr (* inlined *) = [
-    `This of Token.t (* "this" *)
-  | `Super of Token.t (* "super" *)
-]
-
-type line_comment (* inlined *) = Token.t (* pattern \/\/[^\n\r]* *)
 
 type ws (* inlined *) = Token.t (* pattern \s *)
 
-type id (* inlined *) = ident (*tok*)
+type comment (* inlined *) = Token.t (* pattern \/\*([^\*]|(\*[^\/]))*\*\/ *)
 
-type idall (* inlined *) = ident (*tok*)
-
-type idclassorinterfacetype (* inlined *) = ident (*tok*)
+type line_comment (* inlined *) = Token.t (* pattern \/\/[^\n\r]* *)
 
 type binliteral (* inlined *) = (
     [ `X_0b of Token.t (* "0b" *) | `X_0B of Token.t (* "0B" *) ]
   * anon_choice_0_eadfa15
   * anon_choice_0_eadfa15 list (* zero or more *)
   * integertypesuffix option
+)
+
+type idclassorinterfacetype (* inlined *) = ident (*tok*)
+
+type id (* inlined *) = ident (*tok*)
+
+type idall (* inlined *) = ident (*tok*)
+
+type unicodeescape (* inlined *) = (
+    Token.t (* "\\u" *) * hexdigit * hexdigit * hexdigit * hexdigit
 )
 
 type hexliteral (* inlined *) = (
@@ -826,19 +1057,16 @@ type hexliteral (* inlined *) = (
       option
 )
 
-type unicodeescape (* inlined *) = (
-    Token.t (* "\\u" *) * hexdigit * hexdigit * hexdigit * hexdigit
-)
-
 type charliteral (* inlined *) = (
     Token.t (* "'" *) * anon_choice_esca_b61eefe * Token.t (* "'" *)
 )
 
-type featureliteral (* inlined *) = (
-    Token.t (* "#" *)
-  * [ `Id of ident (*tok*) | `Cons of Token.t (* "construct" *) ]
-  * anon_LT_type_rep_COMMA_type_GT_b734705 option
-  * annotationarguments option
+type mapinitializerlist (* inlined *) = (
+    expression
+  * Token.t (* "->" *)
+  * expression
+  * (Token.t (* "," *) * expression * Token.t (* "->" *) * expression)
+      list (* zero or more *)
 )
 
 type namedargexpression (* inlined *) = (
@@ -846,8 +1074,16 @@ type namedargexpression (* inlined *) = (
 )
 
 type primaryexpr (* inlined *) = (
-    [ `Lit of literal | `Type of typeliteralexpr | `Pare of parenthexpr ]
-  * anon_rep_choice_annots_36889ef
+    [
+        `Newe of newexpr
+      | `This of thissuperexpr
+      | `Lit of literal
+      | `Type of typeliteralexpr
+      | `Pare of parenthexpr
+      | `Stan of standalonedatastructureinitialization
+    ]
+  * anon_choice_choice_DOT_idall_opt_LT_type_rep_COMMA_type_GT_16bc336
+      list (* zero or more *)
 )
 
 type extra = [
