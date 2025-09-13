@@ -32,10 +32,10 @@ let extras = [
 ]
 
 let children_regexps : (string * Run.exp option) list = [
-  "pat_dd18f70", None;
-  "digit", None;
-  "pat_0_3", None;
+  "pat_dc28280", None;
+  "id", None;
   "pat_3a2a380", None;
+  "line_comment", None;
   "modifiers",
   Some (
     Repeat1 (
@@ -52,104 +52,27 @@ let children_regexps : (string * Run.exp option) list = [
       |];
     );
   );
-  "pat_dc28280", None;
-  "zerotoseven", None;
-  "line_comment", None;
-  "pat_dcaf70f", None;
-  "id", None;
   "comment", None;
-  "octalescape",
-  Some (
-    Alt [|
-      Seq [
-        Token (Literal "\\");
-        Token (Name "pat_0_3");
-        Token (Name "zerotoseven");
-        Token (Name "zerotoseven");
-      ];
-      Seq [
-        Token (Literal "\\");
-        Token (Name "zerotoseven");
-        Token (Name "zerotoseven");
-      ];
-      Seq [
-        Token (Literal "\\");
-        Token (Name "zerotoseven");
-      ];
-    |];
-  );
-  "hexdigit",
-  Some (
-    Alt [|
-      Token (Name "digit");
-      Token (Name "pat_dcaf70f");
-      Token (Name "pat_dd18f70");
-    |];
-  );
   "type_identifier", Some (Token (Name "id"););
-  "unicodeescape",
-  Some (
-    Seq [
-      Token (Literal "\\u");
-      Token (Name "hexdigit");
-      Token (Name "hexdigit");
-      Token (Name "hexdigit");
-      Token (Name "hexdigit");
-    ];
-  );
-  "type",
-  Some (
-    Alt [|
-      Token (Name "type_identifier");
-    |];
-  );
-  "escapesequence",
-  Some (
-    Alt [|
-      Seq [
-        Token (Literal "\\");
-        Alt [|
-          Token (Literal "v");
-          Token (Literal "a");
-          Token (Literal "b");
-          Token (Literal "t");
-          Token (Literal "n");
-          Token (Literal "f");
-          Token (Literal "r");
-          Token (Literal "\"");
-          Token (Literal "'");
-          Token (Literal "\\");
-          Token (Literal "$");
-          Token (Literal "<");
-        |];
-      ];
-      Token (Name "unicodeescape");
-      Token (Name "octalescape");
-    |];
-  );
   "stringliteral",
   Some (
     Alt [|
       Seq [
         Token (Literal "'");
-        Repeat (
-          Alt [|
-            Token (Name "escapesequence");
-            Token (Name "pat_dc28280");
-          |];
-        );
+        Token (Name "pat_dc28280");
         Token (Literal "'");
       ];
       Seq [
         Token (Literal "\"");
-        Repeat (
-          Alt [|
-            Token (Name "escapesequence");
-            Token (Name "pat_3a2a380");
-          |];
-        );
+        Token (Name "pat_3a2a380");
         Token (Literal "\"");
       ];
+    |];
+  );
+  "type",
+  Some (
+    Alt [|
+      Token (Name "type_identifier");
     |];
   );
   "expression",
@@ -237,22 +160,23 @@ let children_regexps : (string * Run.exp option) list = [
   );
 ]
 
-let trans_pat_dd18f70 ((kind, body) : mt) : CST.pat_dd18f70 =
+
+let trans_pat_dc28280 ((kind, body) : mt) : CST.pat_dc28280 =
   match body with
   | Leaf v -> v
   | Children _ -> assert false
 
-let trans_digit ((kind, body) : mt) : CST.digit =
-  match body with
-  | Leaf v -> v
-  | Children _ -> assert false
-
-let trans_pat_0_3 ((kind, body) : mt) : CST.pat_0_3 =
+let trans_id ((kind, body) : mt) : CST.id =
   match body with
   | Leaf v -> v
   | Children _ -> assert false
 
 let trans_pat_3a2a380 ((kind, body) : mt) : CST.pat_3a2a380 =
+  match body with
+  | Leaf v -> v
+  | Children _ -> assert false
+
+let trans_line_comment ((kind, body) : mt) : CST.line_comment =
   match body with
   | Leaf v -> v
   | Children _ -> assert false
@@ -305,99 +229,10 @@ let trans_modifiers ((kind, body) : mt) : CST.modifiers =
         v
   | Leaf _ -> assert false
 
-let trans_pat_dc28280 ((kind, body) : mt) : CST.pat_dc28280 =
-  match body with
-  | Leaf v -> v
-  | Children _ -> assert false
-
-let trans_zerotoseven ((kind, body) : mt) : CST.zerotoseven =
-  match body with
-  | Leaf v -> v
-  | Children _ -> assert false
-
-let trans_line_comment ((kind, body) : mt) : CST.line_comment =
-  match body with
-  | Leaf v -> v
-  | Children _ -> assert false
-
-let trans_pat_dcaf70f ((kind, body) : mt) : CST.pat_dcaf70f =
-  match body with
-  | Leaf v -> v
-  | Children _ -> assert false
-
-let trans_id ((kind, body) : mt) : CST.id =
-  match body with
-  | Leaf v -> v
-  | Children _ -> assert false
-
 let trans_comment ((kind, body) : mt) : CST.comment =
   match body with
   | Leaf v -> v
   | Children _ -> assert false
-
-let trans_octalescape ((kind, body) : mt) : CST.octalescape =
-  match body with
-  | Children v ->
-      (match v with
-      | Alt (0, v) ->
-          `BSLASH_pat_0_3_zero_zero (
-            (match v with
-            | Seq [v0; v1; v2; v3] ->
-                (
-                  Run.trans_token (Run.matcher_token v0),
-                  trans_pat_0_3 (Run.matcher_token v1),
-                  trans_zerotoseven (Run.matcher_token v2),
-                  trans_zerotoseven (Run.matcher_token v3)
-                )
-            | _ -> assert false
-            )
-          )
-      | Alt (1, v) ->
-          `BSLASH_zero_zero (
-            (match v with
-            | Seq [v0; v1; v2] ->
-                (
-                  Run.trans_token (Run.matcher_token v0),
-                  trans_zerotoseven (Run.matcher_token v1),
-                  trans_zerotoseven (Run.matcher_token v2)
-                )
-            | _ -> assert false
-            )
-          )
-      | Alt (2, v) ->
-          `BSLASH_zero (
-            (match v with
-            | Seq [v0; v1] ->
-                (
-                  Run.trans_token (Run.matcher_token v0),
-                  trans_zerotoseven (Run.matcher_token v1)
-                )
-            | _ -> assert false
-            )
-          )
-      | _ -> assert false
-      )
-  | Leaf _ -> assert false
-
-let trans_hexdigit ((kind, body) : mt) : CST.hexdigit =
-  match body with
-  | Children v ->
-      (match v with
-      | Alt (0, v) ->
-          `Digit (
-            trans_digit (Run.matcher_token v)
-          )
-      | Alt (1, v) ->
-          `Pat_dcaf70f (
-            trans_pat_dcaf70f (Run.matcher_token v)
-          )
-      | Alt (2, v) ->
-          `Pat_dd18f70 (
-            trans_pat_dd18f70 (Run.matcher_token v)
-          )
-      | _ -> assert false
-      )
-  | Leaf _ -> assert false
 
 let trans_type_identifier ((kind, body) : mt) : CST.type_identifier =
   match body with
@@ -405,17 +240,33 @@ let trans_type_identifier ((kind, body) : mt) : CST.type_identifier =
       trans_id (Run.matcher_token v)
   | Leaf _ -> assert false
 
-let trans_unicodeescape ((kind, body) : mt) : CST.unicodeescape =
+let trans_stringliteral ((kind, body) : mt) : CST.stringliteral =
   match body with
   | Children v ->
       (match v with
-      | Seq [v0; v1; v2; v3; v4] ->
-          (
-            Run.trans_token (Run.matcher_token v0),
-            trans_hexdigit (Run.matcher_token v1),
-            trans_hexdigit (Run.matcher_token v2),
-            trans_hexdigit (Run.matcher_token v3),
-            trans_hexdigit (Run.matcher_token v4)
+      | Alt (0, v) ->
+          `SQUOT_pat_dc28280_SQUOT (
+            (match v with
+            | Seq [v0; v1; v2] ->
+                (
+                  Run.trans_token (Run.matcher_token v0),
+                  trans_pat_dc28280 (Run.matcher_token v1),
+                  Run.trans_token (Run.matcher_token v2)
+                )
+            | _ -> assert false
+            )
+          )
+      | Alt (1, v) ->
+          `DQUOT_pat_3a2a380_DQUOT (
+            (match v with
+            | Seq [v0; v1; v2] ->
+                (
+                  Run.trans_token (Run.matcher_token v0),
+                  trans_pat_3a2a380 (Run.matcher_token v1),
+                  Run.trans_token (Run.matcher_token v2)
+                )
+            | _ -> assert false
+            )
           )
       | _ -> assert false
       )
@@ -428,145 +279,6 @@ let trans_type_ ((kind, body) : mt) : CST.type_ =
       | Alt (0, v) ->
           `Type_id (
             trans_type_identifier (Run.matcher_token v)
-          )
-      | _ -> assert false
-      )
-  | Leaf _ -> assert false
-
-let trans_escapesequence ((kind, body) : mt) : CST.escapesequence =
-  match body with
-  | Children v ->
-      (match v with
-      | Alt (0, v) ->
-          `BSLASH_choice_v (
-            (match v with
-            | Seq [v0; v1] ->
-                (
-                  Run.trans_token (Run.matcher_token v0),
-                  (match v1 with
-                  | Alt (0, v) ->
-                      `V (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (1, v) ->
-                      `A (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (2, v) ->
-                      `B (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (3, v) ->
-                      `T (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (4, v) ->
-                      `N (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (5, v) ->
-                      `F (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (6, v) ->
-                      `R (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (7, v) ->
-                      `DQUOT (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (8, v) ->
-                      `SQUOT (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (9, v) ->
-                      `BSLASH (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (10, v) ->
-                      `DOLLAR (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | Alt (11, v) ->
-                      `LT (
-                        Run.trans_token (Run.matcher_token v)
-                      )
-                  | _ -> assert false
-                  )
-                )
-            | _ -> assert false
-            )
-          )
-      | Alt (1, v) ->
-          `Unic (
-            trans_unicodeescape (Run.matcher_token v)
-          )
-      | Alt (2, v) ->
-          `Octa (
-            trans_octalescape (Run.matcher_token v)
-          )
-      | _ -> assert false
-      )
-  | Leaf _ -> assert false
-
-let trans_stringliteral ((kind, body) : mt) : CST.stringliteral =
-  match body with
-  | Children v ->
-      (match v with
-      | Alt (0, v) ->
-          `SQUOT_rep_choice_esca_SQUOT (
-            (match v with
-            | Seq [v0; v1; v2] ->
-                (
-                  Run.trans_token (Run.matcher_token v0),
-                  Run.repeat
-                    (fun v ->
-                      (match v with
-                      | Alt (0, v) ->
-                          `Esca (
-                            trans_escapesequence (Run.matcher_token v)
-                          )
-                      | Alt (1, v) ->
-                          `Pat_dc28280 (
-                            trans_pat_dc28280 (Run.matcher_token v)
-                          )
-                      | _ -> assert false
-                      )
-                    )
-                    v1
-                  ,
-                  Run.trans_token (Run.matcher_token v2)
-                )
-            | _ -> assert false
-            )
-          )
-      | Alt (1, v) ->
-          `DQUOT_rep_choice_esca_DQUOT (
-            (match v with
-            | Seq [v0; v1; v2] ->
-                (
-                  Run.trans_token (Run.matcher_token v0),
-                  Run.repeat
-                    (fun v ->
-                      (match v with
-                      | Alt (0, v) ->
-                          `Esca (
-                            trans_escapesequence (Run.matcher_token v)
-                          )
-                      | Alt (1, v) ->
-                          `Pat_3a2a380 (
-                            trans_pat_3a2a380 (Run.matcher_token v)
-                          )
-                      | _ -> assert false
-                      )
-                    )
-                    v1
-                  ,
-                  Run.trans_token (Run.matcher_token v2)
-                )
-            | _ -> assert false
-            )
           )
       | _ -> assert false
       )
