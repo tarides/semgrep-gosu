@@ -84,6 +84,9 @@ let children_regexps : (string * Run.exp option) list = [
   "fielddefn",
   Some (
     Seq [
+      Opt (
+        Token (Name "modifiers");
+      );
       Token (Literal "var");
       Token (Name "id");
       Opt (
@@ -107,21 +110,16 @@ let children_regexps : (string * Run.exp option) list = [
           Token (Name "expression");
         ];
       );
-    ];
-  );
-  "declaration",
-  Some (
-    Seq [
-      Opt (
-        Token (Name "modifiers");
-      );
-      Alt [|
-        Token (Name "fielddefn");
-      |];
       Opt (
         Token (Literal ";");
       );
     ];
+  );
+  "declaration",
+  Some (
+    Alt [|
+      Token (Name "fielddefn");
+    |];
   );
   "classmembers",
   Some (
@@ -300,10 +298,14 @@ let trans_fielddefn ((kind, body) : mt) : CST.fielddefn =
   match body with
   | Children v ->
       (match v with
-      | Seq [v0; v1; v2; v3; v4] ->
+      | Seq [v0; v1; v2; v3; v4; v5; v6] ->
           (
-            Run.trans_token (Run.matcher_token v0),
-            trans_id (Run.matcher_token v1),
+            Run.opt
+              (fun v -> trans_modifiers (Run.matcher_token v))
+              v0
+            ,
+            Run.trans_token (Run.matcher_token v1),
+            trans_id (Run.matcher_token v2),
             Run.opt
               (fun v ->
                 (match v with
@@ -315,7 +317,7 @@ let trans_fielddefn ((kind, body) : mt) : CST.fielddefn =
                 | _ -> assert false
                 )
               )
-              v2
+              v3
             ,
             Run.opt
               (fun v ->
@@ -332,7 +334,7 @@ let trans_fielddefn ((kind, body) : mt) : CST.fielddefn =
                 | _ -> assert false
                 )
               )
-              v3
+              v4
             ,
             Run.opt
               (fun v ->
@@ -345,7 +347,11 @@ let trans_fielddefn ((kind, body) : mt) : CST.fielddefn =
                 | _ -> assert false
                 )
               )
-              v4
+              v5
+            ,
+            Run.opt
+              (fun v -> Run.trans_token (Run.matcher_token v))
+              v6
           )
       | _ -> assert false
       )
@@ -355,23 +361,9 @@ let trans_declaration ((kind, body) : mt) : CST.declaration =
   match body with
   | Children v ->
       (match v with
-      | Seq [v0; v1; v2] ->
-          (
-            Run.opt
-              (fun v -> trans_modifiers (Run.matcher_token v))
-              v0
-            ,
-            (match v1 with
-            | Alt (0, v) ->
-                `Fiel (
-                  trans_fielddefn (Run.matcher_token v)
-                )
-            | _ -> assert false
-            )
-            ,
-            Run.opt
-              (fun v -> Run.trans_token (Run.matcher_token v))
-              v2
+      | Alt (0, v) ->
+          `Fiel (
+            trans_fielddefn (Run.matcher_token v)
           )
       | _ -> assert false
       )
