@@ -1,33 +1,43 @@
 File: semgrep-grammars/src/tree-sitter-gosu/LICENSE
 Git repo name: tree-sitter-gosu
-Latest commit in repo: 92e667dd42cd2e7b533dd607085e666680568f52
+Latest commit in repo: ad06d7fba99dd8e70f4c6fbe37155e6840d1492e
 Last change in file:
   commit c93aea03dc4190148cbacae8ea837f518c590427
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Wed Sep 10 23:21:47 2025
+  Date:   Wed Sep 10 23:21:47 2025 +0530
   
       Dummy LICENSE for release script in ocaml-tree-sitter-semgrep
 ---
 File: semgrep-grammars/src/tree-sitter-gosu/grammar.js
 Git repo name: tree-sitter-gosu
-Latest commit in repo: 92e667dd42cd2e7b533dd607085e666680568f52
+Latest commit in repo: ad06d7fba99dd8e70f4c6fbe37155e6840d1492e
 Last change in file:
-  commit 92e667dd42cd2e7b533dd607085e666680568f52
-  Author: Stephen Sherratt <stephen@sherra.tt>
-  Date:   Fri Sep 12 12:50:12 2025
+  commit e249b0912c743a779e18328b41b9f2cc6e5634f5
+  Author: Shon Feder <shon.feder@gmail.com>
+  Date:   Fri Sep 12 21:53:37 2025 -0400
   
-      Flip associativity of classOrInterfaceType
+      Reduce grammar to a minimum
       
-      The "<" in expressions like "a < 1" were being treated as part of a type
-      rather than a relative operator.
+      Our current focus should on https://github.com/tarides/client-semgrep/issues/85
+      
+      > We need a tree-sitter-gosu repo that includes a minimal tree-sitter
+      grammar, capable of parsing the simplest valid .gs file.
+      
+      It is not useful to our aims if we can parse all possible .gs files,
+      with all of its various constructs, if we cannot get fully end-to-end
+      parsing into Semgrep. The more complex we make the CST, the more
+      difficult it will be make the initial integration.
+      
+      For this reason, we must resist the completionist urge, and focus on the
+      minimal working thing to get the integration set up.
 ---
 File: semgrep-grammars/src/semgrep-gosu/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 6272ca2e45e4e4fbb4c53ae82670c73e5adac384
+Latest commit in repo: 242997d99a01133c479ebe942df5763ecdee7967
 Last change in file:
   commit d385af8822367b399f1341b2cc58f907165a25cb
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Wed Sep 10 16:56:21 2025
+  Date:   Wed Sep 10 16:56:21 2025 +0530
   
       ./add-simple-lang gosu
 ---
