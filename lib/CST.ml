@@ -41,20 +41,18 @@ type type_ = [ `Type_id of id (*tok*) ]
 
 type expression = [ `Stri of stringliteral ]
 
-type fielddefn = (
-    Token.t (* "var" *)
-  * id (*tok*)
-  * (Token.t (* ":" *) * type_) option
-  * (Token.t (* "as" *) * Token.t (* "readonly" *) option * id (*tok*))
-      option
-  * (Token.t (* "=" *) * expression) option
-)
-
-type declaration = (
-    modifiers option
-  * [ `Fiel of fielddefn ]
-  * Token.t (* ";" *) option
-)
+type declaration = [
+  `Fiel of (
+      modifiers option
+    * Token.t (* "var" *)
+    * id (*tok*)
+    * (Token.t (* ":" *) * type_) option
+    * (Token.t (* "as" *) * Token.t (* "readonly" *) option * id (*tok*))
+        option
+    * (Token.t (* "=" *) * expression) option
+    * Token.t (* ";" *) option
+  )
+]
 
 type classmembers = declaration list (* one or more *)
 
@@ -75,6 +73,17 @@ type line_comment (* inlined *) = Token.t (* pattern \/\/[^\n\r]* *)
 type comment (* inlined *) = Token.t (* pattern \/\*([^\*]|(\*[^\/]))*\*\/ *)
 
 type type_identifier (* inlined *) = id (*tok*)
+
+type fielddefn (* inlined *) = (
+    modifiers option
+  * Token.t (* "var" *)
+  * id (*tok*)
+  * (Token.t (* ":" *) * type_) option
+  * (Token.t (* "as" *) * Token.t (* "readonly" *) option * id (*tok*))
+      option
+  * (Token.t (* "=" *) * expression) option
+  * Token.t (* ";" *) option
+)
 
 type extra = [
     `Comment of Loc.t * comment

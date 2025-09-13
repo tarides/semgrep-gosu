@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-gosu/LICENSE
 Git repo name: tree-sitter-gosu
-Latest commit in repo: cfb3687f5927948ad5f3fdf2e0596077f797d395
+Latest commit in repo: 0b505e6249410a404c4d8b7c13cd0e1bb83c7019
 Last change in file:
   commit c93aea03dc4190148cbacae8ea837f518c590427
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
@@ -10,17 +10,30 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-gosu/grammar.js
 Git repo name: tree-sitter-gosu
-Latest commit in repo: cfb3687f5927948ad5f3fdf2e0596077f797d395
+Latest commit in repo: 0b505e6249410a404c4d8b7c13cd0e1bb83c7019
 Last change in file:
-  commit cfb3687f5927948ad5f3fdf2e0596077f797d395
+  commit 0b505e6249410a404c4d8b7c13cd0e1bb83c7019
   Author: Shon Feder <shon.feder@gmail.com>
-  Date:   Sat Sep 13 04:11:49 2025 -0400
+  Date:   Sat Sep 13 05:14:10 2025 -0400
   
-      Use simplest possible strings
+      Improve representation of fields
+      
+      This is a great example of how/why we ought not to transcribe the EBNF
+      grammar. When we map to the AST, we need to place the modifier together
+      with the feildDefn, but if we follow the EBNF it is under the
+      declaration node. When converting to the AST, this would require us to
+      construct the fieldDefn, then grab the modifier from the parent node and
+      insert it into the fieldDefn after the fact. But if we move the modifier
+      into the fieldDefn, we have it when we need it. Ditto with the
+      semicolon.
+      
+      This is also how the grammar is approached in the Java tree-sitter
+      grammar:
+      https://github.com/tree-sitter/tree-sitter-java/blob/12c4848bc6cf2660d80b435f8d8de1a9d4676d04/grammar.js#L1015-L1020
 ---
 File: semgrep-grammars/src/semgrep-gosu/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: cb48fd35fbc125b107346224e4e63958360fb406
+Latest commit in repo: 2177a90c170c18d3ee8da303788c62ed11f8f28f
 Last change in file:
   commit d385af8822367b399f1341b2cc58f907165a25cb
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
