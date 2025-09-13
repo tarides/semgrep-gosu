@@ -8,11 +8,9 @@
 open! Sexplib.Conv
 open Tree_sitter_run
 
-type pat_dd18f70 = Token.t (* pattern [a-f] *)
+type pat_dc28280 = Token.t (* pattern "[^'\\\\]+" *)
 
-type digit = Token.t (* pattern [0-9] *)
-
-type pat_0_3 = Token.t (* pattern 0-3 *)
+type id = Token.t
 
 type pat_3a2a380 = Token.t (* pattern "[^\"\\\\]+" *)
 
@@ -30,71 +28,16 @@ type modifiers =
   ]
     list (* one or more *)
 
-type pat_dc28280 = Token.t (* pattern "[^'\\\\]+" *)
-
-type zerotoseven = Token.t (* pattern [0-7] *)
-
-type pat_dcaf70f = Token.t (* pattern [A-F] *)
-
-type id = Token.t
-
-type octalescape = [
-    `BSLASH_pat_0_3_zero_zero of (
-        Token.t (* "\\" *) * pat_0_3 * zerotoseven (*tok*)
-      * zerotoseven (*tok*)
+type stringliteral = [
+    `SQUOT_pat_dc28280_SQUOT of (
+        Token.t (* "'" *) * pat_dc28280 * Token.t (* "'" *)
     )
-  | `BSLASH_zero_zero of (
-        Token.t (* "\\" *) * zerotoseven (*tok*) * zerotoseven (*tok*)
+  | `DQUOT_pat_3a2a380_DQUOT of (
+        Token.t (* "\"" *) * pat_3a2a380 * Token.t (* "\"" *)
     )
-  | `BSLASH_zero of (Token.t (* "\\" *) * zerotoseven (*tok*))
-]
-
-type hexdigit = [
-    `Digit of digit (*tok*)
-  | `Pat_dcaf70f of pat_dcaf70f
-  | `Pat_dd18f70 of pat_dd18f70
 ]
 
 type type_ = [ `Type_id of id (*tok*) ]
-
-type escapesequence = [
-    `BSLASH_choice_v of (
-        Token.t (* "\\" *)
-      * [
-            `V of Token.t (* "v" *)
-          | `A of Token.t (* "a" *)
-          | `B of Token.t (* "b" *)
-          | `T of Token.t (* "t" *)
-          | `N of Token.t (* "n" *)
-          | `F of Token.t (* "f" *)
-          | `R of Token.t (* "r" *)
-          | `DQUOT of Token.t (* "\"" *)
-          | `SQUOT of Token.t (* "'" *)
-          | `BSLASH of Token.t (* "\\" *)
-          | `DOLLAR of Token.t (* "$" *)
-          | `LT of Token.t (* "<" *)
-        ]
-    )
-  | `Unic of (
-        Token.t (* "\\u" *) * hexdigit * hexdigit * hexdigit * hexdigit
-    )
-  | `Octa of octalescape
-]
-
-type stringliteral = [
-    `SQUOT_rep_choice_esca_SQUOT of (
-        Token.t (* "'" *)
-      * [ `Esca of escapesequence | `Pat_dc28280 of pat_dc28280 ]
-          list (* zero or more *)
-      * Token.t (* "'" *)
-    )
-  | `DQUOT_rep_choice_esca_DQUOT of (
-        Token.t (* "\"" *)
-      * [ `Esca of escapesequence | `Pat_3a2a380 of pat_3a2a380 ]
-          list (* zero or more *)
-      * Token.t (* "\"" *)
-    )
-]
 
 type expression = [ `Stri of stringliteral ]
 
@@ -125,15 +68,13 @@ type gclass = (Token.t (* "class" *) * id (*tok*) * classbody)
 
 type start = (modifiers option * [ `Gclass of gclass ])
 
+type digit (* inlined *) = Token.t (* pattern [0-9] *)
+
 type line_comment (* inlined *) = Token.t (* pattern \/\/[^\n\r]* *)
 
 type comment (* inlined *) = Token.t (* pattern \/\*([^\*]|(\*[^\/]))*\*\/ *)
 
 type type_identifier (* inlined *) = id (*tok*)
-
-type unicodeescape (* inlined *) = (
-    Token.t (* "\\u" *) * hexdigit * hexdigit * hexdigit * hexdigit
-)
 
 type extra = [
     `Comment of Loc.t * comment

@@ -19,14 +19,11 @@ let token (env : env) (tok : Tree_sitter_run.Token.t) =
 let blank (env : env) () =
   R.Tuple []
 
-let map_pat_dd18f70 (env : env) (tok : CST.pat_dd18f70) =
-  (* pattern [a-f] *) token env tok
+let map_pat_dc28280 (env : env) (tok : CST.pat_dc28280) =
+  (* pattern "[^'\\\\]+" *) token env tok
 
-let map_digit (env : env) (tok : CST.digit) =
-  (* pattern [0-9] *) token env tok
-
-let map_pat_0_3 (env : env) (tok : CST.pat_0_3) =
-  (* pattern 0-3 *) token env tok
+let map_id (env : env) (tok : CST.id) =
+  (* id *) token env tok
 
 let map_pat_3a2a380 (env : env) (tok : CST.pat_3a2a380) =
   (* pattern "[^\"\\\\]+" *) token env tok
@@ -64,50 +61,19 @@ let map_modifiers (env : env) (xs : CST.modifiers) =
     )
   ) xs)
 
-let map_pat_dc28280 (env : env) (tok : CST.pat_dc28280) =
-  (* pattern "[^'\\\\]+" *) token env tok
-
-let map_zerotoseven (env : env) (tok : CST.zerotoseven) =
-  (* pattern [0-7] *) token env tok
-
-let map_pat_dcaf70f (env : env) (tok : CST.pat_dcaf70f) =
-  (* pattern [A-F] *) token env tok
-
-let map_id (env : env) (tok : CST.id) =
-  (* id *) token env tok
-
-let map_octalescape (env : env) (x : CST.octalescape) =
+let map_stringliteral (env : env) (x : CST.stringliteral) =
   (match x with
-  | `BSLASH_pat_0_3_zero_zero (v1, v2, v3, v4) -> R.Case ("BSLASH_pat_0_3_zero_zero",
-      let v1 = (* "\\" *) token env v1 in
-      let v2 = map_pat_0_3 env v2 in
-      let v3 = (* pattern [0-7] *) token env v3 in
-      let v4 = (* pattern [0-7] *) token env v4 in
-      R.Tuple [v1; v2; v3; v4]
-    )
-  | `BSLASH_zero_zero (v1, v2, v3) -> R.Case ("BSLASH_zero_zero",
-      let v1 = (* "\\" *) token env v1 in
-      let v2 = (* pattern [0-7] *) token env v2 in
-      let v3 = (* pattern [0-7] *) token env v3 in
+  | `SQUOT_pat_dc28280_SQUOT (v1, v2, v3) -> R.Case ("SQUOT_pat_dc28280_SQUOT",
+      let v1 = (* "'" *) token env v1 in
+      let v2 = map_pat_dc28280 env v2 in
+      let v3 = (* "'" *) token env v3 in
       R.Tuple [v1; v2; v3]
     )
-  | `BSLASH_zero (v1, v2) -> R.Case ("BSLASH_zero",
-      let v1 = (* "\\" *) token env v1 in
-      let v2 = (* pattern [0-7] *) token env v2 in
-      R.Tuple [v1; v2]
-    )
-  )
-
-let map_hexdigit (env : env) (x : CST.hexdigit) =
-  (match x with
-  | `Digit tok -> R.Case ("Digit",
-      (* pattern [0-9] *) token env tok
-    )
-  | `Pat_dcaf70f x -> R.Case ("Pat_dcaf70f",
-      map_pat_dcaf70f env x
-    )
-  | `Pat_dd18f70 x -> R.Case ("Pat_dd18f70",
-      map_pat_dd18f70 env x
+  | `DQUOT_pat_3a2a380_DQUOT (v1, v2, v3) -> R.Case ("DQUOT_pat_3a2a380_DQUOT",
+      let v1 = (* "\"" *) token env v1 in
+      let v2 = map_pat_3a2a380 env v2 in
+      let v3 = (* "\"" *) token env v3 in
+      R.Tuple [v1; v2; v3]
     )
   )
 
@@ -115,103 +81,6 @@ let map_type_ (env : env) (x : CST.type_) =
   (match x with
   | `Type_id tok -> R.Case ("Type_id",
       (* id *) token env tok
-    )
-  )
-
-let map_escapesequence (env : env) (x : CST.escapesequence) =
-  (match x with
-  | `BSLASH_choice_v (v1, v2) -> R.Case ("BSLASH_choice_v",
-      let v1 = (* "\\" *) token env v1 in
-      let v2 =
-        (match v2 with
-        | `V tok -> R.Case ("V",
-            (* "v" *) token env tok
-          )
-        | `A tok -> R.Case ("A",
-            (* "a" *) token env tok
-          )
-        | `B tok -> R.Case ("B",
-            (* "b" *) token env tok
-          )
-        | `T tok -> R.Case ("T",
-            (* "t" *) token env tok
-          )
-        | `N tok -> R.Case ("N",
-            (* "n" *) token env tok
-          )
-        | `F tok -> R.Case ("F",
-            (* "f" *) token env tok
-          )
-        | `R tok -> R.Case ("R",
-            (* "r" *) token env tok
-          )
-        | `DQUOT tok -> R.Case ("DQUOT",
-            (* "\"" *) token env tok
-          )
-        | `SQUOT tok -> R.Case ("SQUOT",
-            (* "'" *) token env tok
-          )
-        | `BSLASH tok -> R.Case ("BSLASH",
-            (* "\\" *) token env tok
-          )
-        | `DOLLAR tok -> R.Case ("DOLLAR",
-            (* "$" *) token env tok
-          )
-        | `LT tok -> R.Case ("LT",
-            (* "<" *) token env tok
-          )
-        )
-      in
-      R.Tuple [v1; v2]
-    )
-  | `Unic (v1, v2, v3, v4, v5) -> R.Case ("Unic",
-      let v1 = (* "\\u" *) token env v1 in
-      let v2 = map_hexdigit env v2 in
-      let v3 = map_hexdigit env v3 in
-      let v4 = map_hexdigit env v4 in
-      let v5 = map_hexdigit env v5 in
-      R.Tuple [v1; v2; v3; v4; v5]
-    )
-  | `Octa x -> R.Case ("Octa",
-      map_octalescape env x
-    )
-  )
-
-let map_stringliteral (env : env) (x : CST.stringliteral) =
-  (match x with
-  | `SQUOT_rep_choice_esca_SQUOT (v1, v2, v3) -> R.Case ("SQUOT_rep_choice_esca_SQUOT",
-      let v1 = (* "'" *) token env v1 in
-      let v2 =
-        R.List (List.map (fun x ->
-          (match x with
-          | `Esca x -> R.Case ("Esca",
-              map_escapesequence env x
-            )
-          | `Pat_dc28280 x -> R.Case ("Pat_dc28280",
-              map_pat_dc28280 env x
-            )
-          )
-        ) v2)
-      in
-      let v3 = (* "'" *) token env v3 in
-      R.Tuple [v1; v2; v3]
-    )
-  | `DQUOT_rep_choice_esca_DQUOT (v1, v2, v3) -> R.Case ("DQUOT_rep_choice_esca_DQUOT",
-      let v1 = (* "\"" *) token env v1 in
-      let v2 =
-        R.List (List.map (fun x ->
-          (match x with
-          | `Esca x -> R.Case ("Esca",
-              map_escapesequence env x
-            )
-          | `Pat_3a2a380 x -> R.Case ("Pat_3a2a380",
-              map_pat_3a2a380 env x
-            )
-          )
-        ) v2)
-      in
-      let v3 = (* "\"" *) token env v3 in
-      R.Tuple [v1; v2; v3]
     )
   )
 
