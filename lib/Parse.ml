@@ -36,6 +36,7 @@ let children_regexps : (string * Run.exp option) list = [
   "id", None;
   "pat_3a2a380", None;
   "line_comment", None;
+  "semgrep_ellipsis", None;
   "modifiers",
   Some (
     Repeat1 (
@@ -119,6 +120,7 @@ let children_regexps : (string * Run.exp option) list = [
   Some (
     Alt [|
       Token (Name "fielddefn");
+      Token (Name "semgrep_ellipsis");
     |];
   );
   "classmembers",
@@ -175,6 +177,11 @@ let trans_pat_3a2a380 ((kind, body) : mt) : CST.pat_3a2a380 =
   | Children _ -> assert false
 
 let trans_line_comment ((kind, body) : mt) : CST.line_comment =
+  match body with
+  | Leaf v -> v
+  | Children _ -> assert false
+
+let trans_semgrep_ellipsis ((kind, body) : mt) : CST.semgrep_ellipsis =
   match body with
   | Leaf v -> v
   | Children _ -> assert false
@@ -364,6 +371,10 @@ let trans_declaration ((kind, body) : mt) : CST.declaration =
       | Alt (0, v) ->
           `Fiel (
             trans_fielddefn (Run.matcher_token v)
+          )
+      | Alt (1, v) ->
+          `Semg_ellips (
+            trans_semgrep_ellipsis (Run.matcher_token v)
           )
       | _ -> assert false
       )

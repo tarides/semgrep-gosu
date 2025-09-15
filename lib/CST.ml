@@ -42,16 +42,17 @@ type type_ = [ `Type_id of id (*tok*) ]
 type expression = [ `Stri of stringliteral ]
 
 type declaration = [
-  `Fiel of (
-      modifiers option
-    * Token.t (* "var" *)
-    * id (*tok*)
-    * (Token.t (* ":" *) * type_) option
-    * (Token.t (* "as" *) * Token.t (* "readonly" *) option * id (*tok*))
-        option
-    * (Token.t (* "=" *) * expression) option
-    * Token.t (* ";" *) option
-  )
+    `Fiel of (
+        modifiers option
+      * Token.t (* "var" *)
+      * id (*tok*)
+      * (Token.t (* ":" *) * type_) option
+      * (Token.t (* "as" *) * Token.t (* "readonly" *) option * id (*tok*))
+          option
+      * (Token.t (* "=" *) * expression) option
+      * Token.t (* ";" *) option
+    )
+  | `Semg_ellips of Token.t (* "..." *)
 ]
 
 type classmembers = declaration list (* one or more *)
@@ -69,6 +70,8 @@ type start = (modifiers option * [ `Gclass of gclass ])
 type digit (* inlined *) = Token.t (* pattern [0-9] *)
 
 type line_comment (* inlined *) = Token.t (* pattern \/\/[^\n\r]* *)
+
+type semgrep_ellipsis (* inlined *) = Token.t (* "..." *)
 
 type comment (* inlined *) = Token.t (* pattern \/\*([^\*]|(\*[^\/]))*\*\/ *)
 

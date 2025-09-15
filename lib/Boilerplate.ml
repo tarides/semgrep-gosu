@@ -146,6 +146,9 @@ let map_declaration (env : env) (x : CST.declaration) =
       in
       R.Tuple [v1; v2; v3; v4; v5; v6; v7]
     )
+  | `Semg_ellips tok -> R.Case ("Semg_ellips",
+      (* "..." *) token env tok
+    )
   )
 
 let map_classmembers (env : env) (xs : CST.classmembers) =
