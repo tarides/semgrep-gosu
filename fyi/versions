@@ -1,43 +1,35 @@
 File: semgrep-grammars/src/tree-sitter-gosu/LICENSE
 Git repo name: tree-sitter-gosu
-Latest commit in repo: 0b505e6249410a404c4d8b7c13cd0e1bb83c7019
+Latest commit in repo: bd8e40dd2838121c5f66e606876183bb05363788
 Last change in file:
   commit c93aea03dc4190148cbacae8ea837f518c590427
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Wed Sep 10 23:21:47 2025
+  Date:   Wed Sep 10 23:21:47 2025 +0530
   
       Dummy LICENSE for release script in ocaml-tree-sitter-semgrep
 ---
 File: semgrep-grammars/src/tree-sitter-gosu/grammar.js
 Git repo name: tree-sitter-gosu
-Latest commit in repo: 0b505e6249410a404c4d8b7c13cd0e1bb83c7019
+Latest commit in repo: bd8e40dd2838121c5f66e606876183bb05363788
 Last change in file:
-  commit 0b505e6249410a404c4d8b7c13cd0e1bb83c7019
-  Author: Shon Feder <shon.feder@gmail.com>
-  Date:   Sat Sep 13 14:44:10 2025
+  commit bd8e40dd2838121c5f66e606876183bb05363788
+  Author: Stephen Sherratt <stephen@sherra.tt>
+  Date:   Tue Sep 16 15:30:59 2025 +1000
   
-      Improve representation of fields
+      Revert "Remove use of alias"
       
-      This is a great example of how/why we ought not to transcribe the EBNF
-      grammar. When we map to the AST, we need to place the modifier together
-      with the feildDefn, but if we follow the EBNF it is under the
-      declaration node. When converting to the AST, this would require us to
-      construct the fieldDefn, then grab the modifier from the parent node and
-      insert it into the fieldDefn after the fact. But if we move the modifier
-      into the fieldDefn, we have it when we need it. Ditto with the
-      semicolon.
+      The problem doesn't happen when generating the OCaml parser within
+      ocaml-tree-sitter-semgrep.
       
-      This is also how the grammar is approached in the Java tree-sitter
-      grammar:
-      https://github.com/tree-sitter/tree-sitter-java/blob/12c4848bc6cf2660d80b435f8d8de1a9d4676d04/grammar.js#L1015-L1020
+      This reverts commit 878cb5bf7085e68b429ffc671e0907a91fe31d82.
 ---
 File: semgrep-grammars/src/semgrep-gosu/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: cc17454a58d272c2a77db5720142bb6a4350bdb4
+Latest commit in repo: e31f477fcf7887d2eb083938dfa778977e3ec75d
 Last change in file:
   commit cc17454a58d272c2a77db5720142bb6a4350bdb4
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Mon Sep 15 16:06:08 2025
+  Date:   Mon Sep 15 16:06:08 2025 +0530
   
       Allow using ellipsis as classMembers
 ---
