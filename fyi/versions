@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-gosu/LICENSE
 Git repo name: tree-sitter-gosu
-Latest commit in repo: bd8e40dd2838121c5f66e606876183bb05363788
+Latest commit in repo: efc1378b3c1cab2d5426fc8030f43d0263b2b44e
 Last change in file:
   commit c93aea03dc4190148cbacae8ea837f518c590427
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
@@ -10,26 +10,21 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-gosu/grammar.js
 Git repo name: tree-sitter-gosu
-Latest commit in repo: bd8e40dd2838121c5f66e606876183bb05363788
+Latest commit in repo: efc1378b3c1cab2d5426fc8030f43d0263b2b44e
 Last change in file:
-  commit bd8e40dd2838121c5f66e606876183bb05363788
-  Author: Stephen Sherratt <stephen@sherra.tt>
-  Date:   Tue Sep 16 11:00:59 2025
+  commit efc1378b3c1cab2d5426fc8030f43d0263b2b44e
+  Author: Puneeth Chaganti <punchagan@muse-amuse.in>
+  Date:   Tue Sep 16 20:12:55 2025
   
-      Revert "Remove use of alias"
-      
-      The problem doesn't happen when generating the OCaml parser within
-      ocaml-tree-sitter-semgrep.
-      
-      This reverts commit 878cb5bf7085e68b429ffc671e0907a91fe31d82.
+      Extract choices in statement as _statement
 ---
 File: semgrep-grammars/src/semgrep-gosu/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: ef5db75754960ae98a7dd661e533ec27b66f531e
+Latest commit in repo: 26552ec30a4ade5122f98129180cd38efe625a67
 Last change in file:
-  commit ef5db75754960ae98a7dd661e533ec27b66f531e
+  commit 3bfd7d905cfd02925e755e826a02807bf597f0e9
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Tue Sep 16 19:57:27 2025
+  Date:   Tue Sep 16 20:15:11 2025
   
-      Allow using ellipsis in functions
+      Allow using ellipsis in function statements
 ---
