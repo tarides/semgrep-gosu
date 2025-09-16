@@ -8,6 +8,12 @@
 open! Sexplib.Conv
 open Tree_sitter_run
 
+type pat_dc28280 = Token.t (* pattern "[^'\\\\]+" *)
+
+type id = Token.t
+
+type pat_3a2a380 = Token.t (* pattern "[^\"\\\\]+" *)
+
 type modifiers =
   [
       `Priv of Token.t (* "private" *)
@@ -22,12 +28,6 @@ type modifiers =
   ]
     list (* one or more *)
 
-type pat_3a2a380 = Token.t (* pattern "[^\"\\\\]+" *)
-
-type pat_dc28280 = Token.t (* pattern "[^'\\\\]+" *)
-
-type id = Token.t
-
 type stringliteral = [
     `SQUOT_pat_dc28280_SQUOT of (
         Token.t (* "'" *) * pat_dc28280 * Token.t (* "'" *)
@@ -37,53 +37,9 @@ type stringliteral = [
     )
 ]
 
-type expression = [ `Stri of stringliteral ]
-
-type namespacestatement = (
-    id (*tok*)
-  * (Token.t (* "." *) * id (*tok*)) list (* zero or more *)
-  * Token.t (* ";" *) list (* zero or more *)
-)
-
-type usesstatement = (
-    Token.t (* "uses" *)
-  * id (*tok*)
-  * (Token.t (* "." *) * id (*tok*)) list (* zero or more *)
-  * (Token.t (* "." *) * Token.t (* "*" *)) option
-  * Token.t (* ";" *) list (* zero or more *)
-)
-
 type type_ = [ `Type_id of id (*tok*) ]
 
-type indirectmemberaccess1 = [
-    `DOT_id of (Token.t (* "." *) * id (*tok*))
-  | `LPAR_opt_exp_rep_COMMA_exp_RPAR of (
-        Token.t (* "(" *)
-      * (
-            expression
-          * (Token.t (* "," *) * expression) list (* zero or more *)
-        )
-          option
-      * Token.t (* ")" *)
-    )
-]
-
-type localvarstatement = (
-    Token.t (* "var" *)
-  * id (*tok*)
-  * (Token.t (* ":" *) * type_) option
-  * (Token.t (* "=" *) * expression) option
-)
-
-type assignmentormethodcall = (
-    id (*tok*)
-  * indirectmemberaccess1 list (* zero or more *)
-)
-
-type statement = (
-    [ `Loca of localvarstatement | `Assi of assignmentormethodcall ]
-  * Token.t (* ";" *) option
-)
+type expression = [ `Stri of stringliteral ]
 
 type declaration = [
     `Fiel of (
@@ -95,18 +51,6 @@ type declaration = [
           option
       * (Token.t (* "=" *) * expression) option
       * Token.t (* ";" *) option
-    )
-  | `Func of (
-        Token.t (* "function" *)
-      * id (*tok*)
-      * Token.t (* "(" *)
-      * Token.t (* ")" *)
-      * (
-            Token.t (* "{" *)
-          * statement list (* zero or more *)
-          * Token.t (* "}" *)
-        )
-          option
     )
   | `Semg_ellips of Token.t (* "..." *)
 ]
@@ -121,20 +65,15 @@ type classbody = (
 
 type gclass = (Token.t (* "class" *) * id (*tok*) * classbody)
 
-type start = (
-    (Token.t (* "package" *) * namespacestatement) option
-  * usesstatement list (* zero or more *)
-  * modifiers option
-  * [ `Gclass of gclass ]
-)
+type start = (modifiers option * [ `Gclass of gclass ])
 
-type semgrep_ellipsis (* inlined *) = Token.t (* "..." *)
+type digit (* inlined *) = Token.t (* pattern [0-9] *)
 
 type line_comment (* inlined *) = Token.t (* pattern \/\/[^\n\r]* *)
 
-type comment (* inlined *) = Token.t (* pattern \/\*([^\*]|(\*[^\/]))*\*\/ *)
+type semgrep_ellipsis (* inlined *) = Token.t (* "..." *)
 
-type digit (* inlined *) = Token.t (* pattern [0-9] *)
+type comment (* inlined *) = Token.t (* pattern \/\*([^\*]|(\*[^\/]))*\*\/ *)
 
 type type_identifier (* inlined *) = id (*tok*)
 
@@ -147,19 +86,6 @@ type fielddefn (* inlined *) = (
       option
   * (Token.t (* "=" *) * expression) option
   * Token.t (* ";" *) option
-)
-
-type functiondefn (* inlined *) = (
-    Token.t (* "function" *)
-  * id (*tok*)
-  * Token.t (* "(" *)
-  * Token.t (* ")" *)
-  * (
-        Token.t (* "{" *)
-      * statement list (* zero or more *)
-      * Token.t (* "}" *)
-    )
-      option
 )
 
 type extra = [

@@ -4,7 +4,7 @@ Latest commit in repo: bd8e40dd2838121c5f66e606876183bb05363788
 Last change in file:
   commit c93aea03dc4190148cbacae8ea837f518c590427
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Wed Sep 10 23:21:47 2025 +0530
+  Date:   Wed Sep 10 23:21:47 2025
   
       Dummy LICENSE for release script in ocaml-tree-sitter-semgrep
 ---
@@ -14,7 +14,7 @@ Latest commit in repo: bd8e40dd2838121c5f66e606876183bb05363788
 Last change in file:
   commit bd8e40dd2838121c5f66e606876183bb05363788
   Author: Stephen Sherratt <stephen@sherra.tt>
-  Date:   Tue Sep 16 15:30:59 2025 +1000
+  Date:   Tue Sep 16 11:00:59 2025
   
       Revert "Remove use of alias"
       
@@ -25,11 +25,11 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-gosu/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: e31f477fcf7887d2eb083938dfa778977e3ec75d
+Latest commit in repo: ef5db75754960ae98a7dd661e533ec27b66f531e
 Last change in file:
-  commit cc17454a58d272c2a77db5720142bb6a4350bdb4
+  commit ef5db75754960ae98a7dd661e533ec27b66f531e
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Mon Sep 15 16:06:08 2025 +0530
+  Date:   Tue Sep 16 19:57:27 2025
   
-      Allow using ellipsis as classMembers
+      Allow using ellipsis in functions
 ---

@@ -20,5 +20,7 @@ module.exports = grammar(base_grammar, {
 
     declaration: ($, previous) =>
       choice(...previous.members, $.semgrep_ellipsis),
+
+    statement: ($, previous) => choice(...previous.members, $.semgrep_ellipsis),
   },
 });
