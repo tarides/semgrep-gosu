@@ -37,8 +37,6 @@ type stringliteral = [
     )
 ]
 
-type expression = [ `Stri of stringliteral ]
-
 type usesstatement = (
     Token.t (* "uses" *)
   * id (*tok*)
@@ -54,6 +52,8 @@ type namespacestatement = (
 )
 
 type type_ = [ `Type_id of id (*tok*) ]
+
+type expression = [ `Stri of stringliteral | `Id of id (*tok*) ]
 
 type indirectmemberaccess1 = [
     `DOT_id of (Token.t (* "." *) * id (*tok*))

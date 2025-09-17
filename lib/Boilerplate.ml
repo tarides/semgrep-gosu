@@ -77,13 +77,6 @@ let map_stringliteral (env : env) (x : CST.stringliteral) =
     )
   )
 
-let map_expression (env : env) (x : CST.expression) =
-  (match x with
-  | `Stri x -> R.Case ("Stri",
-      map_stringliteral env x
-    )
-  )
-
 let map_usesstatement (env : env) ((v1, v2, v3, v4, v5) : CST.usesstatement) =
   let v1 = (* "uses" *) token env v1 in
   let v2 = (* id *) token env v2 in
@@ -121,6 +114,16 @@ let map_namespacestatement (env : env) ((v1, v2, v3) : CST.namespacestatement) =
 let map_type_ (env : env) (x : CST.type_) =
   (match x with
   | `Type_id tok -> R.Case ("Type_id",
+      (* id *) token env tok
+    )
+  )
+
+let map_expression (env : env) (x : CST.expression) =
+  (match x with
+  | `Stri x -> R.Case ("Stri",
+      map_stringliteral env x
+    )
+  | `Id tok -> R.Case ("Id",
       (* id *) token env tok
     )
   )

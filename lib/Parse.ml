@@ -111,6 +111,7 @@ let children_regexps : (string * Run.exp option) list = [
   Some (
     Alt [|
       Token (Name "stringliteral");
+      Token (Name "id");
     |];
   );
   "type",
@@ -490,6 +491,10 @@ let trans_expression ((kind, body) : mt) : CST.expression =
       | Alt (0, v) ->
           `Stri (
             trans_stringliteral (Run.matcher_token v)
+          )
+      | Alt (1, v) ->
+          `Id (
+            trans_id (Run.matcher_token v)
           )
       | _ -> assert false
       )
