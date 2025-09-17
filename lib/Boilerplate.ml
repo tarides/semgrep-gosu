@@ -19,6 +19,9 @@ let token (env : env) (tok : Tree_sitter_run.Token.t) =
 let blank (env : env) () =
   R.Tuple []
 
+let map_pat_dc28280 (env : env) (tok : CST.pat_dc28280) =
+  (* pattern "[^'\\\\]+" *) token env tok
+
 let map_modifiers (env : env) (xs : CST.modifiers) =
   R.List (List.map (fun x ->
     (match x with
@@ -52,14 +55,27 @@ let map_modifiers (env : env) (xs : CST.modifiers) =
     )
   ) xs)
 
-let map_pat_3a2a380 (env : env) (tok : CST.pat_3a2a380) =
-  (* pattern "[^\"\\\\]+" *) token env tok
-
-let map_pat_dc28280 (env : env) (tok : CST.pat_dc28280) =
-  (* pattern "[^'\\\\]+" *) token env tok
+let map_additiveop (env : env) (x : CST.additiveop) =
+  (match x with
+  | `PLUS tok -> R.Case ("PLUS",
+      (* "+" *) token env tok
+    )
+  | `DASH tok -> R.Case ("DASH",
+      (* "-" *) token env tok
+    )
+  | `QMARKPLUS tok -> R.Case ("QMARKPLUS",
+      (* "?+" *) token env tok
+    )
+  | `QMARKDASH tok -> R.Case ("QMARKDASH",
+      (* "?-" *) token env tok
+    )
+  )
 
 let map_id (env : env) (tok : CST.id) =
   (* id *) token env tok
+
+let map_pat_3a2a380 (env : env) (tok : CST.pat_3a2a380) =
+  (* pattern "[^\"\\\\]+" *) token env tok
 
 let map_stringliteral (env : env) (x : CST.stringliteral) =
   (match x with
@@ -74,6 +90,25 @@ let map_stringliteral (env : env) (x : CST.stringliteral) =
       let v2 = map_pat_3a2a380 env v2 in
       let v3 = (* "\"" *) token env v3 in
       R.Tuple [v1; v2; v3]
+    )
+  )
+
+let map_namespacestatement (env : env) ((v1, v2, v3) : CST.namespacestatement) =
+  let v1 = (* id *) token env v1 in
+  let v2 =
+    R.List (List.map (fun (v1, v2) ->
+      let v1 = (* "." *) token env v1 in
+      let v2 = (* id *) token env v2 in
+      R.Tuple [v1; v2]
+    ) v2)
+  in
+  let v3 = R.List (List.map (token env (* ";" *)) v3) in
+  R.Tuple [v1; v2; v3]
+
+let map_type_ (env : env) (x : CST.type_) =
+  (match x with
+  | `Type_id tok -> R.Case ("Type_id",
+      (* id *) token env tok
     )
   )
 
@@ -99,32 +134,19 @@ let map_usesstatement (env : env) ((v1, v2, v3, v4, v5) : CST.usesstatement) =
   let v5 = R.List (List.map (token env (* ";" *)) v5) in
   R.Tuple [v1; v2; v3; v4; v5]
 
-let map_namespacestatement (env : env) ((v1, v2, v3) : CST.namespacestatement) =
-  let v1 = (* id *) token env v1 in
-  let v2 =
-    R.List (List.map (fun (v1, v2) ->
-      let v1 = (* "." *) token env v1 in
-      let v2 = (* id *) token env v2 in
-      R.Tuple [v1; v2]
-    ) v2)
-  in
-  let v3 = R.List (List.map (token env (* ";" *)) v3) in
-  R.Tuple [v1; v2; v3]
-
-let map_type_ (env : env) (x : CST.type_) =
-  (match x with
-  | `Type_id tok -> R.Case ("Type_id",
-      (* id *) token env tok
-    )
-  )
-
-let map_expression (env : env) (x : CST.expression) =
+let rec map_expression (env : env) (x : CST.expression) =
   (match x with
   | `Stri x -> R.Case ("Stri",
       map_stringliteral env x
     )
   | `Id tok -> R.Case ("Id",
       (* id *) token env tok
+    )
+  | `Addi (v1, v2, v3) -> R.Case ("Addi",
+      let v1 = map_expression env v1 in
+      let v2 = map_additiveop env v2 in
+      let v3 = map_expression env v3 in
+      R.Tuple [v1; v2; v3]
     )
   | `Semg_ellips tok -> R.Case ("Semg_ellips",
       (* "..." *) token env tok

@@ -8,6 +8,8 @@
 open! Sexplib.Conv
 open Tree_sitter_run
 
+type pat_dc28280 = Token.t (* pattern "[^'\\\\]+" *)
+
 type modifiers =
   [
       `Priv of Token.t (* "private" *)
@@ -22,11 +24,16 @@ type modifiers =
   ]
     list (* one or more *)
 
-type pat_3a2a380 = Token.t (* pattern "[^\"\\\\]+" *)
-
-type pat_dc28280 = Token.t (* pattern "[^'\\\\]+" *)
+type additiveop = [
+    `PLUS of Token.t (* "+" *)
+  | `DASH of Token.t (* "-" *)
+  | `QMARKPLUS of Token.t (* "?+" *)
+  | `QMARKDASH of Token.t (* "?-" *)
+]
 
 type id = Token.t
+
+type pat_3a2a380 = Token.t (* pattern "[^\"\\\\]+" *)
 
 type stringliteral = [
     `SQUOT_pat_dc28280_SQUOT of (
@@ -37,14 +44,6 @@ type stringliteral = [
     )
 ]
 
-type usesstatement = (
-    Token.t (* "uses" *)
-  * id (*tok*)
-  * (Token.t (* "." *) * id (*tok*)) list (* zero or more *)
-  * (Token.t (* "." *) * Token.t (* "*" *)) option
-  * Token.t (* ";" *) list (* zero or more *)
-)
-
 type namespacestatement = (
     id (*tok*)
   * (Token.t (* "." *) * id (*tok*)) list (* zero or more *)
@@ -53,9 +52,18 @@ type namespacestatement = (
 
 type type_ = [ `Type_id of id (*tok*) ]
 
+type usesstatement = (
+    Token.t (* "uses" *)
+  * id (*tok*)
+  * (Token.t (* "." *) * id (*tok*)) list (* zero or more *)
+  * (Token.t (* "." *) * Token.t (* "*" *)) option
+  * Token.t (* ";" *) list (* zero or more *)
+)
+
 type expression = [
     `Stri of stringliteral
   | `Id of id (*tok*)
+  | `Addi of (expression * additiveop * expression)
   | `Semg_ellips of Token.t (* "..." *)
 ]
 
@@ -130,15 +138,17 @@ type start = (
   * [ `Gclass of gclass | `Func of functiondefn | `Stmt of statement ]
 )
 
-type semgrep_ellipsis (* inlined *) = Token.t (* "..." *)
-
 type line_comment (* inlined *) = Token.t (* pattern \/\/[^\n\r]* *)
+
+type semgrep_ellipsis (* inlined *) = Token.t (* "..." *)
 
 type comment (* inlined *) = Token.t (* pattern \/\*([^\*]|(\*[^\/]))*\*\/ *)
 
 type digit (* inlined *) = Token.t (* pattern [0-9] *)
 
 type type_identifier (* inlined *) = id (*tok*)
+
+type additiveexpr (* inlined *) = (expression * additiveop * expression)
 
 type localvarstatement (* inlined *) = (
     Token.t (* "var" *)
