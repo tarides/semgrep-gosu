@@ -289,6 +289,8 @@ let children_regexps : (string * Run.exp option) list = [
       );
       Alt [|
         Token (Name "gclass");
+        Token (Name "functiondefn");
+        Token (Name "statement");
       |];
     ];
   );
@@ -831,6 +833,14 @@ let trans_start ((kind, body) : mt) : CST.start =
             | Alt (0, v) ->
                 `Gclass (
                   trans_gclass (Run.matcher_token v)
+                )
+            | Alt (1, v) ->
+                `Func (
+                  trans_functiondefn (Run.matcher_token v)
+                )
+            | Alt (2, v) ->
+                `Stmt (
+                  trans_statement (Run.matcher_token v)
                 )
             | _ -> assert false
             )

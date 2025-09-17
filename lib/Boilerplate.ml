@@ -202,6 +202,23 @@ let map_statement (env : env) ((v1, v2) : CST.statement) =
   in
   R.Tuple [v1; v2]
 
+let map_functiondefn (env : env) ((v1, v2, v3, v4, v5) : CST.functiondefn) =
+  let v1 = (* "function" *) token env v1 in
+  let v2 = (* id *) token env v2 in
+  let v3 = (* "(" *) token env v3 in
+  let v4 = (* ")" *) token env v4 in
+  let v5 =
+    (match v5 with
+    | Some (v1, v2, v3) -> R.Option (Some (
+        let v1 = (* "{" *) token env v1 in
+        let v2 = R.List (List.map (map_statement env) v2) in
+        let v3 = (* "}" *) token env v3 in
+        R.Tuple [v1; v2; v3]
+      ))
+    | None -> R.Option None)
+  in
+  R.Tuple [v1; v2; v3; v4; v5]
+
 let map_declaration (env : env) (x : CST.declaration) =
   (match x with
   | `Fiel (v1, v2, v3, v4, v5, v6, v7) -> R.Case ("Fiel",
@@ -257,22 +274,8 @@ let map_declaration (env : env) (x : CST.declaration) =
       in
       R.Tuple [v1; v2; v3; v4; v5; v6; v7]
     )
-  | `Func (v1, v2, v3, v4, v5) -> R.Case ("Func",
-      let v1 = (* "function" *) token env v1 in
-      let v2 = (* id *) token env v2 in
-      let v3 = (* "(" *) token env v3 in
-      let v4 = (* ")" *) token env v4 in
-      let v5 =
-        (match v5 with
-        | Some (v1, v2, v3) -> R.Option (Some (
-            let v1 = (* "{" *) token env v1 in
-            let v2 = R.List (List.map (map_statement env) v2) in
-            let v3 = (* "}" *) token env v3 in
-            R.Tuple [v1; v2; v3]
-          ))
-        | None -> R.Option None)
-      in
-      R.Tuple [v1; v2; v3; v4; v5]
+  | `Func x -> R.Case ("Func",
+      map_functiondefn env x
     )
   | `Semg_ellips tok -> R.Case ("Semg_ellips",
       (* "..." *) token env tok
@@ -322,6 +325,12 @@ let map_start (env : env) ((v1, v2, v3, v4) : CST.start) =
     (match v4 with
     | `Gclass x -> R.Case ("Gclass",
         map_gclass env x
+      )
+    | `Func x -> R.Case ("Func",
+        map_functiondefn env x
+      )
+    | `Stmt x -> R.Case ("Stmt",
+        map_statement env x
       )
     )
   in

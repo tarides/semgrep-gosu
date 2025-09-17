@@ -81,6 +81,19 @@ type statement_ = [
 
 type statement = (statement_ * Token.t (* ";" *) option)
 
+type functiondefn = (
+    Token.t (* "function" *)
+  * id (*tok*)
+  * Token.t (* "(" *)
+  * Token.t (* ")" *)
+  * (
+        Token.t (* "{" *)
+      * statement list (* zero or more *)
+      * Token.t (* "}" *)
+    )
+      option
+)
+
 type declaration = [
     `Fiel of (
         modifiers option
@@ -92,18 +105,7 @@ type declaration = [
       * (Token.t (* "=" *) * expression) option
       * Token.t (* ";" *) option
     )
-  | `Func of (
-        Token.t (* "function" *)
-      * id (*tok*)
-      * Token.t (* "(" *)
-      * Token.t (* ")" *)
-      * (
-            Token.t (* "{" *)
-          * statement list (* zero or more *)
-          * Token.t (* "}" *)
-        )
-          option
-    )
+  | `Func of functiondefn
   | `Semg_ellips of Token.t (* "..." *)
 ]
 
@@ -121,7 +123,7 @@ type start = (
     (Token.t (* "package" *) * namespacestatement) option
   * usesstatement list (* zero or more *)
   * modifiers option
-  * [ `Gclass of gclass ]
+  * [ `Gclass of gclass | `Func of functiondefn | `Stmt of statement ]
 )
 
 type semgrep_ellipsis (* inlined *) = Token.t (* "..." *)
@@ -155,19 +157,6 @@ type fielddefn (* inlined *) = (
 type assignmentormethodcall (* inlined *) = (
     id (*tok*)
   * indirectmemberaccess1 list (* zero or more *)
-)
-
-type functiondefn (* inlined *) = (
-    Token.t (* "function" *)
-  * id (*tok*)
-  * Token.t (* "(" *)
-  * Token.t (* ")" *)
-  * (
-        Token.t (* "{" *)
-      * statement list (* zero or more *)
-      * Token.t (* "}" *)
-    )
-      option
 )
 
 type extra = [

@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-gosu/LICENSE
 Git repo name: tree-sitter-gosu
-Latest commit in repo: efc1378b3c1cab2d5426fc8030f43d0263b2b44e
+Latest commit in repo: ae3fc4d7e967c63cba4fc95a9d459486476abea8
 Last change in file:
   commit c93aea03dc4190148cbacae8ea837f518c590427
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
@@ -10,17 +10,21 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-gosu/grammar.js
 Git repo name: tree-sitter-gosu
-Latest commit in repo: efc1378b3c1cab2d5426fc8030f43d0263b2b44e
+Latest commit in repo: ae3fc4d7e967c63cba4fc95a9d459486476abea8
 Last change in file:
-  commit efc1378b3c1cab2d5426fc8030f43d0263b2b44e
+  commit ae3fc4d7e967c63cba4fc95a9d459486476abea8
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Tue Sep 16 20:12:55 2025
+  Date:   Wed Sep 17 13:19:36 2025
   
-      Extract choices in statement as _statement
+      Allow function definitions and statements at top-level
+      
+      To allow parsing incomplete files, and make it easier to parse patterns
+      in Semgrep rules, we allow function definitions and statements at the
+      top level. The tree-sitter-java grammar, for instance, also allows this.
 ---
 File: semgrep-grammars/src/semgrep-gosu/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 26552ec30a4ade5122f98129180cd38efe625a67
+Latest commit in repo: dfd6a71b6df577ef2b9b8f482a94aa55cc35f362
 Last change in file:
   commit 3bfd7d905cfd02925e755e826a02807bf597f0e9
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
