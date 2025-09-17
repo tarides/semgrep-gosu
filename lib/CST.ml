@@ -53,7 +53,11 @@ type namespacestatement = (
 
 type type_ = [ `Type_id of id (*tok*) ]
 
-type expression = [ `Stri of stringliteral | `Id of id (*tok*) ]
+type expression = [
+    `Stri of stringliteral
+  | `Id of id (*tok*)
+  | `Semg_ellips of Token.t (* "..." *)
+]
 
 type indirectmemberaccess1 = [
     `DOT_id of (Token.t (* "." *) * id (*tok*))

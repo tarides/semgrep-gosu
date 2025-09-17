@@ -112,6 +112,7 @@ let children_regexps : (string * Run.exp option) list = [
     Alt [|
       Token (Name "stringliteral");
       Token (Name "id");
+      Token (Name "semgrep_ellipsis");
     |];
   );
   "type",
@@ -495,6 +496,10 @@ let trans_expression ((kind, body) : mt) : CST.expression =
       | Alt (1, v) ->
           `Id (
             trans_id (Run.matcher_token v)
+          )
+      | Alt (2, v) ->
+          `Semg_ellips (
+            trans_semgrep_ellipsis (Run.matcher_token v)
           )
       | _ -> assert false
       )

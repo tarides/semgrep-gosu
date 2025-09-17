@@ -126,6 +126,9 @@ let map_expression (env : env) (x : CST.expression) =
   | `Id tok -> R.Case ("Id",
       (* id *) token env tok
     )
+  | `Semg_ellips tok -> R.Case ("Semg_ellips",
+      (* "..." *) token env tok
+    )
   )
 
 let map_indirectmemberaccess1 (env : env) (x : CST.indirectmemberaccess1) =
