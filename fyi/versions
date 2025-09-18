@@ -1,30 +1,30 @@
 File: semgrep-grammars/src/tree-sitter-gosu/LICENSE
 Git repo name: tree-sitter-gosu
-Latest commit in repo: e4b5312a85b52301fcd517b8a10e97903c9a5a28
+Latest commit in repo: ba3f0466a01d821e32a1c1d9c4790a75fdb2e074
 Last change in file:
   commit c93aea03dc4190148cbacae8ea837f518c590427
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Wed Sep 10 23:21:47 2025 +0530
+  Date:   Wed Sep 10 23:21:47 2025
   
       Dummy LICENSE for release script in ocaml-tree-sitter-semgrep
 ---
 File: semgrep-grammars/src/tree-sitter-gosu/grammar.js
 Git repo name: tree-sitter-gosu
-Latest commit in repo: e4b5312a85b52301fcd517b8a10e97903c9a5a28
+Latest commit in repo: ba3f0466a01d821e32a1c1d9c4790a75fdb2e074
 Last change in file:
-  commit e4b5312a85b52301fcd517b8a10e97903c9a5a28
-  Author: Stephen Sherratt <stephen@sherra.tt>
-  Date:   Thu Sep 18 19:01:38 2025 +1000
+  commit ba3f0466a01d821e32a1c1d9c4790a75fdb2e074
+  Author: Puneeth Chaganti <punchagan@muse-amuse.in>
+  Date:   Thu Sep 18 20:17:38 2025
   
-      Indirect member access is expression
+      Support functions with multiple parameters
 ---
 File: semgrep-grammars/src/semgrep-gosu/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 0c3c948d17770c2e852cf3673814f0e1a3a67dd5
+Latest commit in repo: 749075ca57b70451285a4fda688dc43411196fbc
 Last change in file:
   commit 0c3c948d17770c2e852cf3673814f0e1a3a67dd5
   Author: Stephen Sherratt <stephen@sherra.tt>
-  Date:   Thu Sep 18 19:04:15 2025 +1000
+  Date:   Thu Sep 18 14:34:15 2025
   
       gosu: indirect field access is expression
 ---

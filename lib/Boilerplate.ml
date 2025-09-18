@@ -19,6 +19,9 @@ let token (env : env) (tok : Tree_sitter_run.Token.t) =
 let blank (env : env) () =
   R.Tuple []
 
+let map_pat_3a2a380 (env : env) (tok : CST.pat_3a2a380) =
+  (* pattern "[^\"\\\\]+" *) token env tok
+
 let map_modifiers (env : env) (xs : CST.modifiers) =
   R.List (List.map (fun x ->
     (match x with
@@ -68,9 +71,6 @@ let map_additiveop (env : env) (x : CST.additiveop) =
     )
   )
 
-let map_pat_3a2a380 (env : env) (tok : CST.pat_3a2a380) =
-  (* pattern "[^\"\\\\]+" *) token env tok
-
 let map_id (env : env) (tok : CST.id) =
   (* id *) token env tok
 
@@ -92,6 +92,25 @@ let map_stringliteral (env : env) (x : CST.stringliteral) =
       R.Tuple [v1; v2; v3]
     )
   )
+
+let map_type_ (env : env) (x : CST.type_) =
+  (match x with
+  | `Type_id tok -> R.Case ("Type_id",
+      (* id *) token env tok
+    )
+  )
+
+let map_namespacestatement (env : env) ((v1, v2, v3) : CST.namespacestatement) =
+  let v1 = (* id *) token env v1 in
+  let v2 =
+    R.List (List.map (fun (v1, v2) ->
+      let v1 = (* "." *) token env v1 in
+      let v2 = (* id *) token env v2 in
+      R.Tuple [v1; v2]
+    ) v2)
+  in
+  let v3 = R.List (List.map (token env (* ";" *)) v3) in
+  R.Tuple [v1; v2; v3]
 
 let map_usesstatement (env : env) (x : CST.usesstatement) =
   (match x with
@@ -119,25 +138,6 @@ let map_usesstatement (env : env) (x : CST.usesstatement) =
     )
   | `Semg_ellips tok -> R.Case ("Semg_ellips",
       (* "..." *) token env tok
-    )
-  )
-
-let map_namespacestatement (env : env) ((v1, v2, v3) : CST.namespacestatement) =
-  let v1 = (* id *) token env v1 in
-  let v2 =
-    R.List (List.map (fun (v1, v2) ->
-      let v1 = (* "." *) token env v1 in
-      let v2 = (* id *) token env v2 in
-      R.Tuple [v1; v2]
-    ) v2)
-  in
-  let v3 = R.List (List.map (token env (* ";" *)) v3) in
-  R.Tuple [v1; v2; v3]
-
-let map_type_ (env : env) (x : CST.type_) =
-  (match x with
-  | `Type_id tok -> R.Case ("Type_id",
-      (* id *) token env tok
     )
   )
 
@@ -214,6 +214,48 @@ and map_newexpr (env : env) ((v1, v2, v3) : CST.newexpr) =
   let v3 = map_arguments env v3 in
   R.Tuple [v1; v2; v3]
 
+let map_parameterdeclaration (env : env) ((v1, v2) : CST.parameterdeclaration) =
+  let v1 = (* id *) token env v1 in
+  let v2 =
+    (match v2 with
+    | Some x -> R.Option (Some (
+        (match x with
+        | `COLON_type_opt_EQ_exp (v1, v2, v3) -> R.Case ("COLON_type_opt_EQ_exp",
+            let v1 = (* ":" *) token env v1 in
+            let v2 = map_type_ env v2 in
+            let v3 =
+              (match v3 with
+              | Some (v1, v2) -> R.Option (Some (
+                  let v1 = (* "=" *) token env v1 in
+                  let v2 = map_expression env v2 in
+                  R.Tuple [v1; v2]
+                ))
+              | None -> R.Option None)
+            in
+            R.Tuple [v1; v2; v3]
+          )
+        | `EQ_exp (v1, v2) -> R.Case ("EQ_exp",
+            let v1 = (* "=" *) token env v1 in
+            let v2 = map_expression env v2 in
+            R.Tuple [v1; v2]
+          )
+        )
+      ))
+    | None -> R.Option None)
+  in
+  R.Tuple [v1; v2]
+
+let map_parameterdeclarationlist (env : env) ((v1, v2) : CST.parameterdeclarationlist) =
+  let v1 = map_parameterdeclaration env v1 in
+  let v2 =
+    R.List (List.map (fun (v1, v2) ->
+      let v1 = (* "," *) token env v1 in
+      let v2 = map_parameterdeclaration env v2 in
+      R.Tuple [v1; v2]
+    ) v2)
+  in
+  R.Tuple [v1; v2]
+
 let map_statement_ (env : env) (x : CST.statement_) =
   (match x with
   | `Loca (v1, v2, v3, v4) -> R.Case ("Loca",
@@ -271,13 +313,20 @@ let map_statement (env : env) ((v1, v2) : CST.statement) =
   in
   R.Tuple [v1; v2]
 
-let map_functiondefn (env : env) ((v1, v2, v3, v4, v5) : CST.functiondefn) =
+let map_functiondefn (env : env) ((v1, v2, v3, v4, v5, v6) : CST.functiondefn) =
   let v1 = (* "function" *) token env v1 in
   let v2 = (* id *) token env v2 in
   let v3 = (* "(" *) token env v3 in
-  let v4 = (* ")" *) token env v4 in
-  let v5 =
-    (match v5 with
+  let v4 =
+    (match v4 with
+    | Some x -> R.Option (Some (
+        map_parameterdeclarationlist env x
+      ))
+    | None -> R.Option None)
+  in
+  let v5 = (* ")" *) token env v5 in
+  let v6 =
+    (match v6 with
     | Some (v1, v2, v3) -> R.Option (Some (
         let v1 = (* "{" *) token env v1 in
         let v2 = R.List (List.map (map_statement env) v2) in
@@ -286,7 +335,7 @@ let map_functiondefn (env : env) ((v1, v2, v3, v4, v5) : CST.functiondefn) =
       ))
     | None -> R.Option None)
   in
-  R.Tuple [v1; v2; v3; v4; v5]
+  R.Tuple [v1; v2; v3; v4; v5; v6]
 
 let map_declaration (env : env) (x : CST.declaration) =
   (match x with

@@ -8,6 +8,8 @@
 open! Sexplib.Conv
 open Tree_sitter_run
 
+type pat_3a2a380 = Token.t (* pattern "[^\"\\\\]+" *)
+
 type modifiers =
   [
       `Priv of Token.t (* "private" *)
@@ -29,8 +31,6 @@ type additiveop = [
   | `QMARKDASH of Token.t (* "?-" *)
 ]
 
-type pat_3a2a380 = Token.t (* pattern "[^\"\\\\]+" *)
-
 type id = Token.t
 
 type pat_dc28280 = Token.t (* pattern "[^'\\\\]+" *)
@@ -44,6 +44,14 @@ type stringliteral = [
     )
 ]
 
+type type_ = [ `Type_id of id (*tok*) ]
+
+type namespacestatement = (
+    id (*tok*)
+  * (Token.t (* "." *) * id (*tok*)) list (* zero or more *)
+  * Token.t (* ";" *) list (* zero or more *)
+)
+
 type usesstatement = [
     `Uses_id_rep_DOT_id_opt_DOT_STAR_rep_SEMI of (
         Token.t (* "uses" *)
@@ -54,14 +62,6 @@ type usesstatement = [
     )
   | `Semg_ellips of Token.t (* "..." *)
 ]
-
-type namespacestatement = (
-    id (*tok*)
-  * (Token.t (* "." *) * id (*tok*)) list (* zero or more *)
-  * Token.t (* ";" *) list (* zero or more *)
-)
-
-type type_ = [ `Type_id of id (*tok*) ]
 
 type additiveexpr = (expression * additiveop * expression)
 
@@ -92,6 +92,24 @@ and indirectmemberaccess1 = [
 
 and newexpr = (Token.t (* "new" *) * id (*tok*) * arguments)
 
+type parameterdeclaration = (
+    id (*tok*)
+  * [
+        `COLON_type_opt_EQ_exp of (
+            Token.t (* ":" *)
+          * type_
+          * (Token.t (* "=" *) * expression) option
+        )
+      | `EQ_exp of (Token.t (* "=" *) * expression)
+    ]
+      option
+)
+
+type parameterdeclarationlist = (
+    parameterdeclaration
+  * (Token.t (* "," *) * parameterdeclaration) list (* zero or more *)
+)
+
 type statement_ = [
     `Loca of (
         Token.t (* "var" *)
@@ -112,6 +130,7 @@ type functiondefn = (
     Token.t (* "function" *)
   * id (*tok*)
   * Token.t (* "(" *)
+  * parameterdeclarationlist option
   * Token.t (* ")" *)
   * (
         Token.t (* "{" *)
@@ -153,13 +172,13 @@ type start = (
   * [ `Gclass of gclass | `Func of functiondefn | `Stmt of statement ]
 )
 
-type semgrep_ellipsis (* inlined *) = Token.t (* "..." *)
-
 type line_comment (* inlined *) = Token.t (* pattern \/\/[^\n\r]* *)
 
 type comment (* inlined *) = Token.t (* pattern \/\*([^\*]|(\*[^\/]))*\*\/ *)
 
 type digit (* inlined *) = Token.t (* pattern [0-9] *)
+
+type semgrep_ellipsis (* inlined *) = Token.t (* "..." *)
 
 type type_identifier (* inlined *) = id (*tok*)
 
