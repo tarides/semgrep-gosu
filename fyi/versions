@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-gosu/LICENSE
 Git repo name: tree-sitter-gosu
-Latest commit in repo: b99f11c857ed2329b9e1823dfdf7c160a1510766
+Latest commit in repo: e4b5312a85b52301fcd517b8a10e97903c9a5a28
 Last change in file:
   commit c93aea03dc4190148cbacae8ea837f518c590427
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
@@ -10,21 +10,21 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-gosu/grammar.js
 Git repo name: tree-sitter-gosu
-Latest commit in repo: b99f11c857ed2329b9e1823dfdf7c160a1510766
+Latest commit in repo: e4b5312a85b52301fcd517b8a10e97903c9a5a28
 Last change in file:
-  commit b99f11c857ed2329b9e1823dfdf7c160a1510766
+  commit e4b5312a85b52301fcd517b8a10e97903c9a5a28
   Author: Stephen Sherratt <stephen@sherra.tt>
-  Date:   Thu Sep 18 18:03:09 2025 +1000
+  Date:   Thu Sep 18 19:01:38 2025 +1000
   
-      New expression can be a statement
+      Indirect member access is expression
 ---
 File: semgrep-grammars/src/semgrep-gosu/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 55ad4c64656a301407a3914dbdebfbb6050da3db
+Latest commit in repo: 0c3c948d17770c2e852cf3673814f0e1a3a67dd5
 Last change in file:
-  commit 55ad4c64656a301407a3914dbdebfbb6050da3db
+  commit 0c3c948d17770c2e852cf3673814f0e1a3a67dd5
   Author: Stephen Sherratt <stephen@sherra.tt>
-  Date:   Thu Sep 18 18:21:10 2025 +1000
+  Date:   Thu Sep 18 19:04:15 2025 +1000
   
-      Fix ellipsis in uses statement
+      gosu: indirect field access is expression
 ---
