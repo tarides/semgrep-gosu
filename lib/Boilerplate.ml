@@ -134,7 +134,27 @@ let map_usesstatement (env : env) ((v1, v2, v3, v4, v5) : CST.usesstatement) =
   let v5 = R.List (List.map (token env (* ";" *)) v5) in
   R.Tuple [v1; v2; v3; v4; v5]
 
-let rec map_expression (env : env) (x : CST.expression) =
+let rec map_arguments (env : env) ((v1, v2, v3) : CST.arguments) =
+  let v1 = (* "(" *) token env v1 in
+  let v2 =
+    (match v2 with
+    | Some (v1, v2) -> R.Option (Some (
+        let v1 = map_expression env v1 in
+        let v2 =
+          R.List (List.map (fun (v1, v2) ->
+            let v1 = (* "," *) token env v1 in
+            let v2 = map_expression env v2 in
+            R.Tuple [v1; v2]
+          ) v2)
+        in
+        R.Tuple [v1; v2]
+      ))
+    | None -> R.Option None)
+  in
+  let v3 = (* ")" *) token env v3 in
+  R.Tuple [v1; v2; v3]
+
+and map_expression (env : env) (x : CST.expression) =
   (match x with
   | `Stri x -> R.Case ("Stri",
       map_stringliteral env x
@@ -146,6 +166,12 @@ let rec map_expression (env : env) (x : CST.expression) =
       let v1 = map_expression env v1 in
       let v2 = map_additiveop env v2 in
       let v3 = map_expression env v3 in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Newe (v1, v2, v3) -> R.Case ("Newe",
+      let v1 = (* "new" *) token env v1 in
+      let v2 = (* id *) token env v2 in
+      let v3 = map_arguments env v3 in
       R.Tuple [v1; v2; v3]
     )
   | `Semg_ellips tok -> R.Case ("Semg_ellips",
@@ -160,25 +186,8 @@ let map_indirectmemberaccess1 (env : env) (x : CST.indirectmemberaccess1) =
       let v2 = (* id *) token env v2 in
       R.Tuple [v1; v2]
     )
-  | `LPAR_opt_exp_rep_COMMA_exp_RPAR (v1, v2, v3) -> R.Case ("LPAR_opt_exp_rep_COMMA_exp_RPAR",
-      let v1 = (* "(" *) token env v1 in
-      let v2 =
-        (match v2 with
-        | Some (v1, v2) -> R.Option (Some (
-            let v1 = map_expression env v1 in
-            let v2 =
-              R.List (List.map (fun (v1, v2) ->
-                let v1 = (* "," *) token env v1 in
-                let v2 = map_expression env v2 in
-                R.Tuple [v1; v2]
-              ) v2)
-            in
-            R.Tuple [v1; v2]
-          ))
-        | None -> R.Option None)
-      in
-      let v3 = (* ")" *) token env v3 in
-      R.Tuple [v1; v2; v3]
+  | `Args x -> R.Case ("Args",
+      map_arguments env x
     )
   )
 

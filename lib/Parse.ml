@@ -130,14 +130,41 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Name "expression");
     ];
   );
+  "arguments",
+  Some (
+    Seq [
+      Token (Literal "(");
+      Opt (
+        Seq [
+          Token (Name "expression");
+          Repeat (
+            Seq [
+              Token (Literal ",");
+              Token (Name "expression");
+            ];
+          );
+        ];
+      );
+      Token (Literal ")");
+    ];
+  );
   "expression",
   Some (
     Alt [|
       Token (Name "stringliteral");
       Token (Name "id");
       Token (Name "additiveexpr");
+      Token (Name "newexpr");
       Token (Name "semgrep_ellipsis");
     |];
+  );
+  "newexpr",
+  Some (
+    Seq [
+      Token (Literal "new");
+      Token (Name "id");
+      Token (Name "arguments");
+    ];
   );
   "localvarstatement",
   Some (
@@ -165,21 +192,7 @@ let children_regexps : (string * Run.exp option) list = [
         Token (Literal ".");
         Token (Name "id");
       ];
-      Seq [
-        Token (Literal "(");
-        Opt (
-          Seq [
-            Token (Name "expression");
-            Repeat (
-              Seq [
-                Token (Literal ",");
-                Token (Name "expression");
-              ];
-            );
-          ];
-        );
-        Token (Literal ")");
-      ];
+      Token (Name "arguments");
     |];
   );
   "fielddefn",
@@ -553,6 +566,43 @@ let rec trans_additiveexpr ((kind, body) : mt) : CST.additiveexpr =
       )
   | Leaf _ -> assert false
 
+and trans_arguments ((kind, body) : mt) : CST.arguments =
+  match body with
+  | Children v ->
+      (match v with
+      | Seq [v0; v1; v2] ->
+          (
+            Run.trans_token (Run.matcher_token v0),
+            Run.opt
+              (fun v ->
+                (match v with
+                | Seq [v0; v1] ->
+                    (
+                      trans_expression (Run.matcher_token v0),
+                      Run.repeat
+                        (fun v ->
+                          (match v with
+                          | Seq [v0; v1] ->
+                              (
+                                Run.trans_token (Run.matcher_token v0),
+                                trans_expression (Run.matcher_token v1)
+                              )
+                          | _ -> assert false
+                          )
+                        )
+                        v1
+                    )
+                | _ -> assert false
+                )
+              )
+              v1
+            ,
+            Run.trans_token (Run.matcher_token v2)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
 and trans_expression ((kind, body) : mt) : CST.expression =
   match body with
   | Children v ->
@@ -570,8 +620,26 @@ and trans_expression ((kind, body) : mt) : CST.expression =
             trans_additiveexpr (Run.matcher_token v)
           )
       | Alt (3, v) ->
+          `Newe (
+            trans_newexpr (Run.matcher_token v)
+          )
+      | Alt (4, v) ->
           `Semg_ellips (
             trans_semgrep_ellipsis (Run.matcher_token v)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+and trans_newexpr ((kind, body) : mt) : CST.newexpr =
+  match body with
+  | Children v ->
+      (match v with
+      | Seq [v0; v1; v2] ->
+          (
+            Run.trans_token (Run.matcher_token v0),
+            trans_id (Run.matcher_token v1),
+            trans_arguments (Run.matcher_token v2)
           )
       | _ -> assert false
       )
@@ -631,39 +699,8 @@ let trans_indirectmemberaccess1 ((kind, body) : mt) : CST.indirectmemberaccess1 
             )
           )
       | Alt (1, v) ->
-          `LPAR_opt_exp_rep_COMMA_exp_RPAR (
-            (match v with
-            | Seq [v0; v1; v2] ->
-                (
-                  Run.trans_token (Run.matcher_token v0),
-                  Run.opt
-                    (fun v ->
-                      (match v with
-                      | Seq [v0; v1] ->
-                          (
-                            trans_expression (Run.matcher_token v0),
-                            Run.repeat
-                              (fun v ->
-                                (match v with
-                                | Seq [v0; v1] ->
-                                    (
-                                      Run.trans_token (Run.matcher_token v0),
-                                      trans_expression (Run.matcher_token v1)
-                                    )
-                                | _ -> assert false
-                                )
-                              )
-                              v1
-                          )
-                      | _ -> assert false
-                      )
-                    )
-                    v1
-                  ,
-                  Run.trans_token (Run.matcher_token v2)
-                )
-            | _ -> assert false
-            )
+          `Args (
+            trans_arguments (Run.matcher_token v)
           )
       | _ -> assert false
       )

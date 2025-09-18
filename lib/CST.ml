@@ -60,24 +60,24 @@ type usesstatement = (
   * Token.t (* ";" *) list (* zero or more *)
 )
 
-type expression = [
+type arguments = (
+    Token.t (* "(" *)
+  * (expression * (Token.t (* "," *) * expression) list (* zero or more *))
+      option
+  * Token.t (* ")" *)
+)
+
+and expression = [
     `Stri of stringliteral
   | `Id of id (*tok*)
   | `Addi of (expression * additiveop * expression)
+  | `Newe of (Token.t (* "new" *) * id (*tok*) * arguments)
   | `Semg_ellips of Token.t (* "..." *)
 ]
 
 type indirectmemberaccess1 = [
     `DOT_id of (Token.t (* "." *) * id (*tok*))
-  | `LPAR_opt_exp_rep_COMMA_exp_RPAR of (
-        Token.t (* "(" *)
-      * (
-            expression
-          * (Token.t (* "," *) * expression) list (* zero or more *)
-        )
-          option
-      * Token.t (* ")" *)
-    )
+  | `Args of arguments
 ]
 
 type statement_ = [
@@ -149,6 +149,8 @@ type digit (* inlined *) = Token.t (* pattern [0-9] *)
 type type_identifier (* inlined *) = id (*tok*)
 
 type additiveexpr (* inlined *) = (expression * additiveop * expression)
+
+type newexpr (* inlined *) = (Token.t (* "new" *) * id (*tok*) * arguments)
 
 type localvarstatement (* inlined *) = (
     Token.t (* "var" *)

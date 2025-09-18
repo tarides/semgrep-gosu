@@ -1,30 +1,30 @@
 File: semgrep-grammars/src/tree-sitter-gosu/LICENSE
 Git repo name: tree-sitter-gosu
-Latest commit in repo: b7a1c6515ecbd9403dbeefd663d1ec24c85c947d
+Latest commit in repo: 62fdc02cdfff2ffc2fdad0b7e1a496aacdecde7d
 Last change in file:
   commit c93aea03dc4190148cbacae8ea837f518c590427
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Wed Sep 10 23:21:47 2025
+  Date:   Wed Sep 10 23:21:47 2025 +0530
   
       Dummy LICENSE for release script in ocaml-tree-sitter-semgrep
 ---
 File: semgrep-grammars/src/tree-sitter-gosu/grammar.js
 Git repo name: tree-sitter-gosu
-Latest commit in repo: b7a1c6515ecbd9403dbeefd663d1ec24c85c947d
+Latest commit in repo: 62fdc02cdfff2ffc2fdad0b7e1a496aacdecde7d
 Last change in file:
-  commit b7a1c6515ecbd9403dbeefd663d1ec24c85c947d
-  Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Wed Sep 17 22:01:56 2025
+  commit 62fdc02cdfff2ffc2fdad0b7e1a496aacdecde7d
+  Author: Stephen Sherratt <stephen@sherra.tt>
+  Date:   Thu Sep 18 15:42:50 2025 +1000
   
-      Add additive operators and expression
+      Add new expressions
 ---
 File: semgrep-grammars/src/semgrep-gosu/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: a4bb17b0c74e6d076c32b0baa27fe56301a7a371
+Latest commit in repo: 613bb8f28fae1c25c9e7c6fb1a736ed87ee73e13
 Last change in file:
   commit a6b1f94c32728a21de655298c7984cdc9093220f
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Wed Sep 17 17:30:24 2025
+  Date:   Wed Sep 17 17:30:24 2025 +0530
   
       gosu: Allow ellipsis in expressions (for rules)
 ---
