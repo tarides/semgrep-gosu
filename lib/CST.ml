@@ -52,13 +52,16 @@ type namespacestatement = (
 
 type type_ = [ `Type_id of id (*tok*) ]
 
-type usesstatement = (
-    Token.t (* "uses" *)
-  * id (*tok*)
-  * (Token.t (* "." *) * id (*tok*)) list (* zero or more *)
-  * (Token.t (* "." *) * Token.t (* "*" *)) option
-  * Token.t (* ";" *) list (* zero or more *)
-)
+type usesstatement = [
+    `Uses_id_rep_DOT_id_opt_DOT_STAR_rep_SEMI of (
+        Token.t (* "uses" *)
+      * id (*tok*)
+      * (Token.t (* "." *) * id (*tok*)) list (* zero or more *)
+      * (Token.t (* "." *) * Token.t (* "*" *)) option
+      * Token.t (* ";" *) list (* zero or more *)
+    )
+  | `Semg_ellips of Token.t (* "..." *)
+]
 
 type arguments = (
     Token.t (* "(" *)
@@ -71,9 +74,11 @@ and expression = [
     `Stri of stringliteral
   | `Id of id (*tok*)
   | `Addi of (expression * additiveop * expression)
-  | `Newe of (Token.t (* "new" *) * id (*tok*) * arguments)
+  | `Newe of newexpr
   | `Semg_ellips of Token.t (* "..." *)
 ]
+
+and newexpr = (Token.t (* "new" *) * id (*tok*) * arguments)
 
 type indirectmemberaccess1 = [
     `DOT_id of (Token.t (* "." *) * id (*tok*))
@@ -87,7 +92,10 @@ type statement_ = [
       * (Token.t (* ":" *) * type_) option
       * (Token.t (* "=" *) * expression) option
     )
-  | `Assi of (id (*tok*) * indirectmemberaccess1 list (* zero or more *))
+  | `Assi of (
+        [ `Id of id (*tok*) | `Newe of newexpr ]
+      * indirectmemberaccess1 list (* zero or more *)
+    )
   | `Semg_ellips of Token.t (* "..." *)
 ]
 
@@ -150,8 +158,6 @@ type type_identifier (* inlined *) = id (*tok*)
 
 type additiveexpr (* inlined *) = (expression * additiveop * expression)
 
-type newexpr (* inlined *) = (Token.t (* "new" *) * id (*tok*) * arguments)
-
 type localvarstatement (* inlined *) = (
     Token.t (* "var" *)
   * id (*tok*)
@@ -171,7 +177,7 @@ type fielddefn (* inlined *) = (
 )
 
 type assignmentormethodcall (* inlined *) = (
-    id (*tok*)
+    [ `Id of id (*tok*) | `Newe of newexpr ]
   * indirectmemberaccess1 list (* zero or more *)
 )
 

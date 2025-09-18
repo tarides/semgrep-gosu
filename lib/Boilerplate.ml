@@ -112,27 +112,34 @@ let map_type_ (env : env) (x : CST.type_) =
     )
   )
 
-let map_usesstatement (env : env) ((v1, v2, v3, v4, v5) : CST.usesstatement) =
-  let v1 = (* "uses" *) token env v1 in
-  let v2 = (* id *) token env v2 in
-  let v3 =
-    R.List (List.map (fun (v1, v2) ->
-      let v1 = (* "." *) token env v1 in
+let map_usesstatement (env : env) (x : CST.usesstatement) =
+  (match x with
+  | `Uses_id_rep_DOT_id_opt_DOT_STAR_rep_SEMI (v1, v2, v3, v4, v5) -> R.Case ("Uses_id_rep_DOT_id_opt_DOT_STAR_rep_SEMI",
+      let v1 = (* "uses" *) token env v1 in
       let v2 = (* id *) token env v2 in
-      R.Tuple [v1; v2]
-    ) v3)
-  in
-  let v4 =
-    (match v4 with
-    | Some (v1, v2) -> R.Option (Some (
-        let v1 = (* "." *) token env v1 in
-        let v2 = (* "*" *) token env v2 in
-        R.Tuple [v1; v2]
-      ))
-    | None -> R.Option None)
-  in
-  let v5 = R.List (List.map (token env (* ";" *)) v5) in
-  R.Tuple [v1; v2; v3; v4; v5]
+      let v3 =
+        R.List (List.map (fun (v1, v2) ->
+          let v1 = (* "." *) token env v1 in
+          let v2 = (* id *) token env v2 in
+          R.Tuple [v1; v2]
+        ) v3)
+      in
+      let v4 =
+        (match v4 with
+        | Some (v1, v2) -> R.Option (Some (
+            let v1 = (* "." *) token env v1 in
+            let v2 = (* "*" *) token env v2 in
+            R.Tuple [v1; v2]
+          ))
+        | None -> R.Option None)
+      in
+      let v5 = R.List (List.map (token env (* ";" *)) v5) in
+      R.Tuple [v1; v2; v3; v4; v5]
+    )
+  | `Semg_ellips tok -> R.Case ("Semg_ellips",
+      (* "..." *) token env tok
+    )
+  )
 
 let rec map_arguments (env : env) ((v1, v2, v3) : CST.arguments) =
   let v1 = (* "(" *) token env v1 in
@@ -168,16 +175,19 @@ and map_expression (env : env) (x : CST.expression) =
       let v3 = map_expression env v3 in
       R.Tuple [v1; v2; v3]
     )
-  | `Newe (v1, v2, v3) -> R.Case ("Newe",
-      let v1 = (* "new" *) token env v1 in
-      let v2 = (* id *) token env v2 in
-      let v3 = map_arguments env v3 in
-      R.Tuple [v1; v2; v3]
+  | `Newe x -> R.Case ("Newe",
+      map_newexpr env x
     )
   | `Semg_ellips tok -> R.Case ("Semg_ellips",
       (* "..." *) token env tok
     )
   )
+
+and map_newexpr (env : env) ((v1, v2, v3) : CST.newexpr) =
+  let v1 = (* "new" *) token env v1 in
+  let v2 = (* id *) token env v2 in
+  let v3 = map_arguments env v3 in
+  R.Tuple [v1; v2; v3]
 
 let map_indirectmemberaccess1 (env : env) (x : CST.indirectmemberaccess1) =
   (match x with
@@ -217,7 +227,16 @@ let map_statement_ (env : env) (x : CST.statement_) =
       R.Tuple [v1; v2; v3; v4]
     )
   | `Assi (v1, v2) -> R.Case ("Assi",
-      let v1 = (* id *) token env v1 in
+      let v1 =
+        (match v1 with
+        | `Id tok -> R.Case ("Id",
+            (* id *) token env tok
+          )
+        | `Newe x -> R.Case ("Newe",
+            map_newexpr env x
+          )
+        )
+      in
       let v2 =
         R.List (List.map (map_indirectmemberaccess1 env) v2)
       in

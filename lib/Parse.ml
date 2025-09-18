@@ -81,25 +81,28 @@ let children_regexps : (string * Run.exp option) list = [
   );
   "usesstatement",
   Some (
-    Seq [
-      Token (Literal "uses");
-      Token (Name "id");
-      Repeat (
-        Seq [
-          Token (Literal ".");
-          Token (Name "id");
-        ];
-      );
-      Opt (
-        Seq [
-          Token (Literal ".");
-          Token (Literal "*");
-        ];
-      );
-      Repeat (
-        Token (Literal ";");
-      );
-    ];
+    Alt [|
+      Seq [
+        Token (Literal "uses");
+        Token (Name "id");
+        Repeat (
+          Seq [
+            Token (Literal ".");
+            Token (Name "id");
+          ];
+        );
+        Opt (
+          Seq [
+            Token (Literal ".");
+            Token (Literal "*");
+          ];
+        );
+        Repeat (
+          Token (Literal ";");
+        );
+      ];
+      Token (Name "semgrep_ellipsis");
+    |];
   );
   "stringliteral",
   Some (
@@ -232,7 +235,10 @@ let children_regexps : (string * Run.exp option) list = [
   "assignmentormethodcall",
   Some (
     Seq [
-      Token (Name "id");
+      Alt [|
+        Token (Name "id");
+        Token (Name "newexpr");
+      |];
       Repeat (
         Token (Name "indirectmemberaccess1");
       );
@@ -470,39 +476,49 @@ let trans_usesstatement ((kind, body) : mt) : CST.usesstatement =
   match body with
   | Children v ->
       (match v with
-      | Seq [v0; v1; v2; v3; v4] ->
-          (
-            Run.trans_token (Run.matcher_token v0),
-            trans_id (Run.matcher_token v1),
-            Run.repeat
-              (fun v ->
-                (match v with
-                | Seq [v0; v1] ->
-                    (
-                      Run.trans_token (Run.matcher_token v0),
-                      trans_id (Run.matcher_token v1)
+      | Alt (0, v) ->
+          `Uses_id_rep_DOT_id_opt_DOT_STAR_rep_SEMI (
+            (match v with
+            | Seq [v0; v1; v2; v3; v4] ->
+                (
+                  Run.trans_token (Run.matcher_token v0),
+                  trans_id (Run.matcher_token v1),
+                  Run.repeat
+                    (fun v ->
+                      (match v with
+                      | Seq [v0; v1] ->
+                          (
+                            Run.trans_token (Run.matcher_token v0),
+                            trans_id (Run.matcher_token v1)
+                          )
+                      | _ -> assert false
+                      )
                     )
-                | _ -> assert false
-                )
-              )
-              v2
-            ,
-            Run.opt
-              (fun v ->
-                (match v with
-                | Seq [v0; v1] ->
-                    (
-                      Run.trans_token (Run.matcher_token v0),
-                      Run.trans_token (Run.matcher_token v1)
+                    v2
+                  ,
+                  Run.opt
+                    (fun v ->
+                      (match v with
+                      | Seq [v0; v1] ->
+                          (
+                            Run.trans_token (Run.matcher_token v0),
+                            Run.trans_token (Run.matcher_token v1)
+                          )
+                      | _ -> assert false
+                      )
                     )
-                | _ -> assert false
+                    v3
+                  ,
+                  Run.repeat
+                    (fun v -> Run.trans_token (Run.matcher_token v))
+                    v4
                 )
-              )
-              v3
-            ,
-            Run.repeat
-              (fun v -> Run.trans_token (Run.matcher_token v))
-              v4
+            | _ -> assert false
+            )
+          )
+      | Alt (1, v) ->
+          `Semg_ellips (
+            trans_semgrep_ellipsis (Run.matcher_token v)
           )
       | _ -> assert false
       )
@@ -775,7 +791,18 @@ let trans_assignmentormethodcall ((kind, body) : mt) : CST.assignmentormethodcal
       (match v with
       | Seq [v0; v1] ->
           (
-            trans_id (Run.matcher_token v0),
+            (match v0 with
+            | Alt (0, v) ->
+                `Id (
+                  trans_id (Run.matcher_token v)
+                )
+            | Alt (1, v) ->
+                `Newe (
+                  trans_newexpr (Run.matcher_token v)
+                )
+            | _ -> assert false
+            )
+            ,
             Run.repeat
               (fun v -> trans_indirectmemberaccess1 (Run.matcher_token v))
               v1
