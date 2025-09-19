@@ -214,36 +214,43 @@ and map_newexpr (env : env) ((v1, v2, v3) : CST.newexpr) =
   let v3 = map_arguments env v3 in
   R.Tuple [v1; v2; v3]
 
-let map_parameterdeclaration (env : env) ((v1, v2) : CST.parameterdeclaration) =
-  let v1 = (* id *) token env v1 in
-  let v2 =
-    (match v2 with
-    | Some x -> R.Option (Some (
-        (match x with
-        | `COLON_type_opt_EQ_exp (v1, v2, v3) -> R.Case ("COLON_type_opt_EQ_exp",
-            let v1 = (* ":" *) token env v1 in
-            let v2 = map_type_ env v2 in
-            let v3 =
-              (match v3 with
-              | Some (v1, v2) -> R.Option (Some (
-                  let v1 = (* "=" *) token env v1 in
-                  let v2 = map_expression env v2 in
-                  R.Tuple [v1; v2]
-                ))
-              | None -> R.Option None)
-            in
-            R.Tuple [v1; v2; v3]
-          )
-        | `EQ_exp (v1, v2) -> R.Case ("EQ_exp",
-            let v1 = (* "=" *) token env v1 in
-            let v2 = map_expression env v2 in
-            R.Tuple [v1; v2]
-          )
-        )
-      ))
-    | None -> R.Option None)
-  in
-  R.Tuple [v1; v2]
+let map_parameterdeclaration (env : env) (x : CST.parameterdeclaration) =
+  (match x with
+  | `Id_opt_choice_COLON_type_opt_EQ_exp (v1, v2) -> R.Case ("Id_opt_choice_COLON_type_opt_EQ_exp",
+      let v1 = (* id *) token env v1 in
+      let v2 =
+        (match v2 with
+        | Some x -> R.Option (Some (
+            (match x with
+            | `COLON_type_opt_EQ_exp (v1, v2, v3) -> R.Case ("COLON_type_opt_EQ_exp",
+                let v1 = (* ":" *) token env v1 in
+                let v2 = map_type_ env v2 in
+                let v3 =
+                  (match v3 with
+                  | Some (v1, v2) -> R.Option (Some (
+                      let v1 = (* "=" *) token env v1 in
+                      let v2 = map_expression env v2 in
+                      R.Tuple [v1; v2]
+                    ))
+                  | None -> R.Option None)
+                in
+                R.Tuple [v1; v2; v3]
+              )
+            | `EQ_exp (v1, v2) -> R.Case ("EQ_exp",
+                let v1 = (* "=" *) token env v1 in
+                let v2 = map_expression env v2 in
+                R.Tuple [v1; v2]
+              )
+            )
+          ))
+        | None -> R.Option None)
+      in
+      R.Tuple [v1; v2]
+    )
+  | `Semg_ellips tok -> R.Case ("Semg_ellips",
+      (* "..." *) token env tok
+    )
+  )
 
 let map_parameterdeclarationlist (env : env) ((v1, v2) : CST.parameterdeclarationlist) =
   let v1 = map_parameterdeclaration env v1 in

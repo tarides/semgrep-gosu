@@ -4,7 +4,7 @@ Latest commit in repo: ba3f0466a01d821e32a1c1d9c4790a75fdb2e074
 Last change in file:
   commit c93aea03dc4190148cbacae8ea837f518c590427
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Wed Sep 10 23:21:47 2025
+  Date:   Wed Sep 10 23:21:47 2025 +0530
   
       Dummy LICENSE for release script in ocaml-tree-sitter-semgrep
 ---
@@ -14,17 +14,17 @@ Latest commit in repo: ba3f0466a01d821e32a1c1d9c4790a75fdb2e074
 Last change in file:
   commit ba3f0466a01d821e32a1c1d9c4790a75fdb2e074
   Author: Puneeth Chaganti <punchagan@muse-amuse.in>
-  Date:   Thu Sep 18 20:17:38 2025
+  Date:   Thu Sep 18 20:17:38 2025 +0530
   
       Support functions with multiple parameters
 ---
 File: semgrep-grammars/src/semgrep-gosu/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 749075ca57b70451285a4fda688dc43411196fbc
+Latest commit in repo: 0c1e673df704e7c82b143757a57befa603c0067c
 Last change in file:
-  commit 0c3c948d17770c2e852cf3673814f0e1a3a67dd5
+  commit 0c1e673df704e7c82b143757a57befa603c0067c
   Author: Stephen Sherratt <stephen@sherra.tt>
-  Date:   Thu Sep 18 14:34:15 2025
+  Date:   Fri Sep 19 12:19:40 2025 +1000
   
-      gosu: indirect field access is expression
+      Allow ellipsis in parameter declaration
 ---

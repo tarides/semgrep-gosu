@@ -92,18 +92,21 @@ and indirectmemberaccess1 = [
 
 and newexpr = (Token.t (* "new" *) * id (*tok*) * arguments)
 
-type parameterdeclaration = (
-    id (*tok*)
-  * [
-        `COLON_type_opt_EQ_exp of (
-            Token.t (* ":" *)
-          * type_
-          * (Token.t (* "=" *) * expression) option
-        )
-      | `EQ_exp of (Token.t (* "=" *) * expression)
-    ]
-      option
-)
+type parameterdeclaration = [
+    `Id_opt_choice_COLON_type_opt_EQ_exp of (
+        id (*tok*)
+      * [
+            `COLON_type_opt_EQ_exp of (
+                Token.t (* ":" *)
+              * type_
+              * (Token.t (* "=" *) * expression) option
+            )
+          | `EQ_exp of (Token.t (* "=" *) * expression)
+        ]
+          option
+    )
+  | `Semg_ellips of Token.t (* "..." *)
+]
 
 type parameterdeclarationlist = (
     parameterdeclaration

@@ -222,27 +222,30 @@ let children_regexps : (string * Run.exp option) list = [
   );
   "parameterdeclaration",
   Some (
-    Seq [
-      Token (Name "id");
-      Opt (
-        Alt [|
-          Seq [
-            Token (Literal ":");
-            Token (Name "type");
-            Opt (
-              Seq [
-                Token (Literal "=");
-                Token (Name "expression");
-              ];
-            );
-          ];
-          Seq [
-            Token (Literal "=");
-            Token (Name "expression");
-          ];
-        |];
-      );
-    ];
+    Alt [|
+      Seq [
+        Token (Name "id");
+        Opt (
+          Alt [|
+            Seq [
+              Token (Literal ":");
+              Token (Name "type");
+              Opt (
+                Seq [
+                  Token (Literal "=");
+                  Token (Name "expression");
+                ];
+              );
+            ];
+            Seq [
+              Token (Literal "=");
+              Token (Name "expression");
+            ];
+          |];
+        );
+      ];
+      Token (Name "semgrep_ellipsis");
+    |];
   );
   "localvarstatement",
   Some (
@@ -813,50 +816,60 @@ let trans_parameterdeclaration ((kind, body) : mt) : CST.parameterdeclaration =
   match body with
   | Children v ->
       (match v with
-      | Seq [v0; v1] ->
-          (
-            trans_id (Run.matcher_token v0),
-            Run.opt
-              (fun v ->
-                (match v with
-                | Alt (0, v) ->
-                    `COLON_type_opt_EQ_exp (
+      | Alt (0, v) ->
+          `Id_opt_choice_COLON_type_opt_EQ_exp (
+            (match v with
+            | Seq [v0; v1] ->
+                (
+                  trans_id (Run.matcher_token v0),
+                  Run.opt
+                    (fun v ->
                       (match v with
-                      | Seq [v0; v1; v2] ->
-                          (
-                            Run.trans_token (Run.matcher_token v0),
-                            trans_type_ (Run.matcher_token v1),
-                            Run.opt
-                              (fun v ->
-                                (match v with
-                                | Seq [v0; v1] ->
-                                    (
-                                      Run.trans_token (Run.matcher_token v0),
-                                      trans_expression (Run.matcher_token v1)
+                      | Alt (0, v) ->
+                          `COLON_type_opt_EQ_exp (
+                            (match v with
+                            | Seq [v0; v1; v2] ->
+                                (
+                                  Run.trans_token (Run.matcher_token v0),
+                                  trans_type_ (Run.matcher_token v1),
+                                  Run.opt
+                                    (fun v ->
+                                      (match v with
+                                      | Seq [v0; v1] ->
+                                          (
+                                            Run.trans_token (Run.matcher_token v0),
+                                            trans_expression (Run.matcher_token v1)
+                                          )
+                                      | _ -> assert false
+                                      )
                                     )
-                                | _ -> assert false
+                                    v2
                                 )
-                              )
-                              v2
+                            | _ -> assert false
+                            )
+                          )
+                      | Alt (1, v) ->
+                          `EQ_exp (
+                            (match v with
+                            | Seq [v0; v1] ->
+                                (
+                                  Run.trans_token (Run.matcher_token v0),
+                                  trans_expression (Run.matcher_token v1)
+                                )
+                            | _ -> assert false
+                            )
                           )
                       | _ -> assert false
                       )
                     )
-                | Alt (1, v) ->
-                    `EQ_exp (
-                      (match v with
-                      | Seq [v0; v1] ->
-                          (
-                            Run.trans_token (Run.matcher_token v0),
-                            trans_expression (Run.matcher_token v1)
-                          )
-                      | _ -> assert false
-                      )
-                    )
-                | _ -> assert false
+                    v1
                 )
-              )
-              v1
+            | _ -> assert false
+            )
+          )
+      | Alt (1, v) ->
+          `Semg_ellips (
+            trans_semgrep_ellipsis (Run.matcher_token v)
           )
       | _ -> assert false
       )
